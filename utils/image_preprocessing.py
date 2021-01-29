@@ -15,6 +15,7 @@ default_mask_dir = os.path.join(default_root_dir, "masks/videos/")
 default_real_root_dir = r"C:/Code/Projects/XRay/Data/FaceForensic/original_sequences/actors/"
 default_real_video_dir = os.path.join(default_real_root_dir, "c23/videos/")
 
+
 # set mask dir to None if it is a real video
 def load_video_paths(video_dir, mask_dir):
     video_mask_list = []
@@ -71,6 +72,7 @@ def get_random_frame_from_list(video_mask_list):
     mask_frame = get_frame_from_video(video_mask_list[video_idx][1], frame_idx)
     return video_frame, mask_frame
 
+
 def get_blank_mask_from_size(size):
     mask_frame = np.empty(size, dtype=np.float)
     return mask_frame
@@ -84,7 +86,6 @@ def show_image(image):
     cv2.imshow("", resized_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
 
 
 def main():
@@ -101,6 +102,7 @@ def main():
     # for video, mask in tqdm(video_mask_list):
     #     count_list.append(get_video_frame_count(video))
     # print(count_list)
+
 
 if __name__ == "__main__":
     main()

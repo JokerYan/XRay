@@ -7,11 +7,11 @@ from utils.image_preprocessing import default_video_dir, default_mask_dir, defau
 
 train_val_ratio = 0.7
 data_folder = "./data/"
-train_out_path = os.path.join(data_folder, "train_data.csv")
-val_out_path = os.path.join(data_folder, "val_data.csv")
+train_out_path = os.path.join(data_folder, "train_video.csv")
+val_out_path = os.path.join(data_folder, "val_video.csv")
 
 def write_to_csv(csv_path, video_paths):
-    print("writing video paths to {}".format(csv_path))
+    print("writing paths to {}".format(csv_path))
     lines = []
     for (video_path, mask_path) in video_paths:
         is_fake = "1" if mask_path is not None else "0"

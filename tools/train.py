@@ -127,7 +127,7 @@ def main():
     # define loss function (criterion) and optimizer
     # criterion = torch.nn.CrossEntropyLoss().cuda()
     criterion1 = torch.nn.BCELoss().cuda()
-    criterion2 = torch.nn.BCELToss().cuda()
+    criterion2 = torch.nn.BCELoss().cuda()
 
     optimizer = get_optimizer(config, model)
 
@@ -166,7 +166,7 @@ def main():
                                      std=[0.229, 0.224, 0.225])
 
     train_dataset = XRayDataset(
-        './data/train_data.csv',
+        './data/train_image.csv',
          transforms.Compose([
              custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),
              custom_transforms.RandomCrop(config.MODEL.IMAGE_SIZE[0]),
@@ -208,9 +208,8 @@ def main():
     #     pin_memory=True
     # )
 
-
     valid_dataset = XRayDataset(
-        './data/val_data.csv',
+        './data/val_image.csv',
          transforms.Compose([
              # TODO: Change Random Crop to Centre Crop
              custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),

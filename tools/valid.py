@@ -138,7 +138,7 @@ def main():
     # )
 
     valid_dataset = XRayDataset(
-        './data/val_data.csv',
+        './data/val_image.csv',
          transforms.Compose([
              # TODO: Change Random Crop to Centre Crop
              custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),

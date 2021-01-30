@@ -108,7 +108,7 @@ def main():
                                         'final_state.pth.tar')
         logger.info('=> loading model from {}'.format(model_state_file))
         # model.load_state_dict(torch.load(model_state_file))
-        model.load_hrnet_pretrained(torch.load(model_state_file))
+        model.load_state_dict(model_state_file)
 
     gpus = list(config.GPUS)
     model = torch.nn.DataParallel(model, device_ids=gpus).cuda()

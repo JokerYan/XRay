@@ -26,6 +26,11 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
     losses = AverageMeter()
     accuracy = AverageMeter()
 
+    # freeze / unfreeze hrnet
+    if epoch == 0:
+        model.module.freeze_hrnet()
+    elif epoch == 1:
+        model.module.unfreeze_hrnet()
 
     # switch to train mode
     model.train()

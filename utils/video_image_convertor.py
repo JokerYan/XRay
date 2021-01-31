@@ -1,6 +1,7 @@
 import os
 import re
 import cv2
+from skimage import io as skiio
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
 
@@ -12,12 +13,6 @@ train_output_csv = "./data/train_image.csv"
 val_input_csv = "./data/val_video.csv"
 val_output_csv = "./data/val_image.csv"
 target_size = int(256 / 0.875)
-
-
-def main():
-    os.makedirs(output_dir, exist_ok=True)
-    save_all_frames(train_input_csv, train_output_csv)
-    save_all_frames(val_input_csv, val_output_csv)
 
 
 def save_all_frames(input_csv, output_csv):
@@ -60,6 +55,38 @@ def save_video_frames(src_path, suffix):
         save_paths.append(output_path)
     return save_paths
 
+
+def detect_premature_image(image_path):
+    with open(image_path, 'rb') as f:
+        check_chars = f.read()[-2:]
+    if check_chars != b'\xff\xd9':
+        print('Not complete image')
+        return False
+    return True
+
+
+def main():
+    # os.makedirs(output_dir, exist_ok=True)
+    # save_all_frames(train_input_csv, train_output_csv)
+    # save_all_frames(val_input_csv, val_output_csv)
+
+    # walk through all frames to ensure complete jpg saved
+    train_video_frame_list = load_from_csv(train_output_csv)
+    val_video_frame_list = load_from_csv(val_output_csv)
+    # print("training set")
+    # for i in tqdm(range(len(train_video_frame_list))):
+    #     video_path, mask_path, is_fake = train_video_frame_list[i]
+    #     if not detect_premature_image(video_path):
+    #         print(i, video_path)
+    #     if mask_path is None and not detect_premature_image(mask_path):
+    #         print(i, mask_path)
+    print("validation set")
+    for i in tqdm(range(len(val_video_frame_list))):
+        video_path, mask_path, is_fake = train_video_frame_list[i]
+        if not detect_premature_image(video_path):
+            print(i, video_path)
+        if mask_path is not None and not detect_premature_image(mask_path):
+            print(i, mask_path)
 
 if __name__ == "__main__":
     main()

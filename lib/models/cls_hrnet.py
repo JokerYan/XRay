@@ -513,6 +513,13 @@ class HighResolutionNet(nn.Module):
             model_dict.update(pretrained_dict)
             self.load_state_dict(model_dict)
 
+    def freeze_weights(self):
+        for param in self.parameters():
+            param.requires_grad = False
+
+    def unfreeze_weights(self):
+        for param in self.parameters():
+            param.requires_grad = False
 
 def get_cls_net(config, **kwargs):
     model = HighResolutionNet(config, **kwargs)

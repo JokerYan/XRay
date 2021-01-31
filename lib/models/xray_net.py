@@ -72,8 +72,8 @@ class XRayNet(nn.Module):
         self.hrnet.load_state_dict(model_file)
 
     def freeze_hrnet(self):
-        self.hrnet.train(False)
+        self.hrnet.freeze_weights()
 
     def unfreeze_hrnet(self):
-        self.hrnet.train(True)
+        self.hrnet.unfreeze_weights()
 

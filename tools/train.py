@@ -230,9 +230,6 @@ def main():
     )
 
     for epoch in range(last_epoch, config.TRAIN.END_EPOCH):
-        # freeze / unfreeze hrnet
-        if epoch == 0:
-            model.module.unfreeze_hrnet()
         # train for one epoch
         train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
               final_output_dir, tb_log_dir, writer_dict)

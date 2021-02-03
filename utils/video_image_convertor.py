@@ -5,13 +5,20 @@ from skimage import io as skiio
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
 
-from utils.data_preperation import load_from_csv, write_to_csv
+from utils.data_preperation import load_from_csv, write_to_csv, concate_csv
+
+# output_dir = r"C:/Code/Projects/XRay/Data/FaceForensicImage/"
+# train_input_csv = "./data/train_video.csv"
+# train_output_csv = "./data/train_image.csv"
+# val_input_csv = "./data/val_video.csv"
+# val_output_csv = "./data/val_image.csv"
+# target_size = int(256 / 0.875)
 
 output_dir = r"C:/Code/Projects/XRay/Data/FaceForensicImage/"
-train_input_csv = "./data/train_video.csv"
-train_output_csv = "./data/train_image.csv"
-val_input_csv = "./data/val_video.csv"
-val_output_csv = "./data/val_image.csv"
+train_input_csv = "./data/train_video_youtube.csv"
+train_output_csv = "./data/train_image_youtube.csv"
+val_input_csv = "./data/val_video_youtube.csv"
+val_output_csv = "./data/val_image_youtube.csv"
 target_size = int(256 / 0.875)
 
 
@@ -66,27 +73,27 @@ def detect_premature_image(image_path):
 
 
 def main():
-    # os.makedirs(output_dir, exist_ok=True)
-    # save_all_frames(train_input_csv, train_output_csv)
-    # save_all_frames(val_input_csv, val_output_csv)
+    os.makedirs(output_dir, exist_ok=True)
+    save_all_frames(train_input_csv, train_output_csv)
+    save_all_frames(val_input_csv, val_output_csv)
 
-    # walk through all frames to ensure complete jpg saved
-    train_video_frame_list = load_from_csv(train_output_csv)
-    val_video_frame_list = load_from_csv(val_output_csv)
-    # print("training set")
-    # for i in tqdm(range(len(train_video_frame_list))):
+    # # walk through all frames to ensure complete jpg saved
+    # train_video_frame_list = load_from_csv(train_output_csv)
+    # val_video_frame_list = load_from_csv(val_output_csv)
+    # # print("training set")
+    # # for i in tqdm(range(len(train_video_frame_list))):
+    # #     video_path, mask_path, is_fake = train_video_frame_list[i]
+    # #     if not detect_premature_image(video_path):
+    # #         print(i, video_path)
+    # #     if mask_path is None and not detect_premature_image(mask_path):
+    # #         print(i, mask_path)
+    # print("validation set")
+    # for i in tqdm(range(len(val_video_frame_list))):
     #     video_path, mask_path, is_fake = train_video_frame_list[i]
     #     if not detect_premature_image(video_path):
     #         print(i, video_path)
-    #     if mask_path is None and not detect_premature_image(mask_path):
+    #     if mask_path is not None and not detect_premature_image(mask_path):
     #         print(i, mask_path)
-    print("validation set")
-    for i in tqdm(range(len(val_video_frame_list))):
-        video_path, mask_path, is_fake = train_video_frame_list[i]
-        if not detect_premature_image(video_path):
-            print(i, video_path)
-        if mask_path is not None and not detect_premature_image(mask_path):
-            print(i, mask_path)
 
 if __name__ == "__main__":
     main()

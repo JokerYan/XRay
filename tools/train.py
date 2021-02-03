@@ -159,14 +159,14 @@ def main():
         )
 
     # Data loading code
-    traindir = os.path.join(config.DATASET.ROOT, config.DATASET.TRAIN_SET)
-    valdir = os.path.join(config.DATASET.ROOT, config.DATASET.TEST_SET)
-
-    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                     std=[0.229, 0.224, 0.225])
+    # traindir = os.path.join(config.DATASET.ROOT, config.DATASET.TRAIN_SET)
+    # valdir = os.path.join(config.DATASET.ROOT, config.DATASET.TEST_SET)
+    #
+    # normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+    #                                  std=[0.229, 0.224, 0.225])
 
     train_dataset = XRayDataset(
-        './data/train_image.csv',
+        './data/train_image_selected.csv',
          transforms.Compose([
              custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),
              custom_transforms.RandomCrop(config.MODEL.IMAGE_SIZE[0]),
@@ -209,7 +209,7 @@ def main():
     # )
 
     valid_dataset = XRayDataset(
-        './data/val_image.csv',
+        './data/val_image_selected.csv',
          transforms.Compose([
              # TODO: Change Random Crop to Centre Crop
              custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),

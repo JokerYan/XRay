@@ -15,6 +15,8 @@ import torch
 
 from lib.core.evaluate import cal_accuracy
 
+from utils.image_preprocessing import show_normalized_images
+
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +31,7 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
     # freeze / unfreeze hrnet
     if epoch == 0:
         model.module.freeze_hrnet()
-    elif epoch == 1:
+    elif epoch == 3:
         model.module.unfreeze_hrnet()
 
     # switch to train mode
@@ -47,6 +49,7 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
 
         # compute output
         output_x, output_c = model(input)
+
         target_x = target_x.cuda(non_blocking=True)
         target_c = target_c.cuda(non_blocking=True)
 
@@ -91,7 +94,7 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
 
 
 def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_log_dir,
-             writer_dict=None):
+             writer_dict=None, show_image=False):
     batch_time = AverageMeter()
     losses = AverageMeter()
     accuracy = AverageMeter()
@@ -108,6 +111,9 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
 
             # compute output
             output_x, output_c = model(input)
+
+            if show_image:
+                show_normalized_images(input[0], output_x[0], str(target_c[0]))
 
             target_x = target_x.cuda(non_blocking=True)
             target_c = target_c.cuda(non_blocking=True)

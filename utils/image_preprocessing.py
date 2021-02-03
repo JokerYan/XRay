@@ -12,16 +12,15 @@ default_root_dir = "C:/Code/Projects/XRay/Data/FaceForensic/manipulated_sequence
 default_video_dir = os.path.join(default_root_dir, "c23/videos/")
 default_mask_dir = os.path.join(default_root_dir, "masks/videos/")
 
-default_real_root_dir = r"C:/Code/Projects/XRay/Data/FaceForensic/original_sequences/actors/"
-default_real_video_dir = os.path.join(default_real_root_dir, "c23/videos/")
-
+default_real_root_dir = r"C:/Code/Projects/XRay/Data/FaceForensic/original_sequences/"
+default_real_video_dir = os.path.join(default_real_root_dir, "**/")
 
 # set mask dir to None if it is a real video
 def load_video_paths(video_dir, mask_dir):
     video_mask_list = []
     valid_video_count = 0
     total_video_count = 0
-    for video_path in glob(video_dir + "*"):
+    for video_path in glob(video_dir + "*.mp4"):
         assert video_path.endswith("mp4")
         video_name = re.search(r'[/\\]([\d\w_]+.mp4)', video_path).group(1)
         if mask_dir is None:  # real video
@@ -78,14 +77,29 @@ def get_blank_mask_from_size(size):
     return mask_frame
 
 
-def show_image(image):
-    target_width = 800
+def show_image(image, title=""):
+    target_width = 400
     target_height = int(target_width * image.shape[0] / image.shape[1])
     resized_image = cv2.resize(image, (target_width, target_height))
 
-    cv2.imshow("", resized_image)
+    cv2.imshow(title, resized_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
+def show_normalized_images(video_frame, mask_frame, is_fake):
+    video_frame = video_frame.cpu().clone().detach().numpy()
+    mask_frame = mask_frame.cpu().clone().detach().numpy()
+    mean = np.asarray([0.485, 0.456, 0.406])
+    std = np.asarray([0.229, 0.224, 0.225])
+    video_frame = video_frame.transpose((1, 2, 0))
+    mask_frame = mask_frame.transpose((1, 2, 0))
+    video_frame = np.multiply(video_frame, std)
+    mean = np.multiply(np.ones_like(video_frame), mean)
+    video_frame = video_frame + mean
+    # video_frame = video_frame * 255
+    # mask_frame = mask_frame * 255
+    mask_frame = np.tile(mask_frame, [3])
+    show_image(np.vstack((video_frame, mask_frame)), is_fake)
 
 
 def main():
@@ -96,7 +110,7 @@ def main():
     to_xray_transformer = MaskToXray()
     sample = to_one_transformer(sample)
     sample = to_xray_transformer(sample)
-    show_image(np.vstack((sample['video_frame'], sample['mask_frame'])))
+    # show_image(np.vstack((sample['video_frame'], sample['mask_frame'])))
 
     # count_list = []
     # for video, mask in tqdm(video_mask_list):

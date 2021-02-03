@@ -76,13 +76,13 @@ TEST:
 TRAIN:
   BATCH_SIZE_PER_GPU: 16
   BEGIN_EPOCH: 0
-  END_EPOCH: 100
+  END_EPOCH: 10
   RESUME: true
-  LR_FACTOR: 0.1
+  LR_FACTOR: 0.3
   LR_STEP:
-  - 30
-  - 60
-  - 90
+  - 7
+  - 8
+  - 9
   OPTIMIZER: adam
   LR: 0.0002
   WD: 0.0001

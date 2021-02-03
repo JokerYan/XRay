@@ -107,8 +107,7 @@ def main():
         model_state_file = os.path.join(final_output_dir,
                                         'final_state.pth.tar')
         logger.info('=> loading model from {}'.format(model_state_file))
-        # model.load_state_dict(torch.load(model_state_file))
-        model.load_state_dict(model_state_file)
+        model.load_state_dict(torch.load(model_state_file))
 
     gpus = list(config.GPUS)
     model = torch.nn.DataParallel(model, device_ids=gpus).cuda()
@@ -138,7 +137,7 @@ def main():
     # )
 
     valid_dataset = XRayDataset(
-        './data/val_image.csv',
+        './data/val_image_selected.csv',
          transforms.Compose([
              # TODO: Change Random Crop to Centre Crop
              custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),
@@ -160,7 +159,7 @@ def main():
 
     # evaluate on validation set
     validate(config, valid_loader, model, criterion1, criterion2, final_output_dir,
-             tb_log_dir, None)
+             tb_log_dir, None, show_image=True)
 
 
 if __name__ == '__main__':

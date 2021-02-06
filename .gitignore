@@ -1,2 +1,5 @@
-./log/
-./output/
+log/
+output/
+data/
+
+*.pyc

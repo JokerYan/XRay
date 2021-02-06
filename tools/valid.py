@@ -104,10 +104,12 @@ def main():
         # model.load_state_dict(torch.load(config.TEST.MODEL_FILE))
         model.load_hrnet_pretrained(torch.load(config.TEST.MODEL_FILE))
     else:
+        # model_state_file = os.path.join(final_output_dir,
+        #                                 'final_state.pth.tar')
         model_state_file = os.path.join(final_output_dir,
-                                        'final_state.pth.tar')
+                                        'checkpoint.pth.tar')
         logger.info('=> loading model from {}'.format(model_state_file))
-        model.load_state_dict(torch.load(model_state_file))
+        model.load_state_dict(torch.load(model_state_file)['state_dict'])
 
     gpus = list(config.GPUS)
     model = torch.nn.DataParallel(model, device_ids=gpus).cuda()
@@ -152,7 +154,7 @@ def main():
     valid_loader = torch.utils.data.DataLoader(
         valid_dataset,
         batch_size=config.TEST.BATCH_SIZE_PER_GPU*len(gpus),
-        shuffle=False,
+        shuffle=True,
         num_workers=config.WORKERS,
         pin_memory=True
     )

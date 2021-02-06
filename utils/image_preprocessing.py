@@ -89,6 +89,7 @@ def show_image(image, title=""):
 def show_normalized_images(video_frame, mask_frame, is_fake):
     video_frame = video_frame.cpu().clone().detach().numpy()
     mask_frame = mask_frame.cpu().clone().detach().numpy()
+    is_fake = is_fake.cpu().clone().detach().numpy()
     mean = np.asarray([0.485, 0.456, 0.406])
     std = np.asarray([0.229, 0.224, 0.225])
     video_frame = video_frame.transpose((1, 2, 0))
@@ -99,7 +100,7 @@ def show_normalized_images(video_frame, mask_frame, is_fake):
     # video_frame = video_frame * 255
     # mask_frame = mask_frame * 255
     mask_frame = np.tile(mask_frame, [3])
-    show_image(np.vstack((video_frame, mask_frame)), is_fake)
+    show_image(np.vstack((video_frame, mask_frame)), str(is_fake))
 
 
 def main():

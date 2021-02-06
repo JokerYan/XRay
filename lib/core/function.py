@@ -113,7 +113,7 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             output_x, output_c = model(input)
 
             if show_image:
-                show_normalized_images(input[0], output_x[0], str(target_c[0]))
+                show_normalized_images(input[0], output_x[0], target_c[0])
 
             target_x = target_x.cuda(non_blocking=True)
             target_c = target_c.cuda(non_blocking=True)

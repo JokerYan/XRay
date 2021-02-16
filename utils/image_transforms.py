@@ -53,8 +53,8 @@ class Rescale(object):
 
         new_h, new_w = int(new_h), int(new_w)
 
-        video_frame = skimage_transforms.resize(video_frame, (new_h, new_w))
-        mask_frame = skimage_transforms.resize(mask_frame, (new_h, new_w))
+        video_frame = skimage_transforms.resize(video_frame, (new_h, new_w), anti_aliasing=True)
+        mask_frame = skimage_transforms.resize(mask_frame, (new_h, new_w), anti_aliasing=True)
 
         return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
 

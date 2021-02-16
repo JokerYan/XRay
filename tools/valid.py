@@ -109,7 +109,11 @@ def main():
         model_state_file = os.path.join(final_output_dir,
                                         'checkpoint.pth.tar')
         logger.info('=> loading model from {}'.format(model_state_file))
-        model.load_state_dict(torch.load(model_state_file)['state_dict'])
+        model_state = torch.load(model_state_file)
+        if 'state_dict' in model_state:
+            model.load_state_dict(model_state['state_dict'])
+        else:
+            model.load_state_dict(model_state)
 
     gpus = list(config.GPUS)
     model = torch.nn.DataParallel(model, device_ids=gpus).cuda()
@@ -161,7 +165,7 @@ def main():
 
     # evaluate on validation set
     validate(config, valid_loader, model, criterion1, criterion2, final_output_dir,
-             tb_log_dir, None, show_image=True)
+             tb_log_dir, None, show_image=False)
 
 
 if __name__ == '__main__':

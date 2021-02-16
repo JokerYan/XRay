@@ -8,9 +8,12 @@ from tqdm import tqdm
 
 from utils.image_transforms import ImageToOne, MaskToXray
 
-default_root_dir = "C:/Code/Projects/XRay/Data/FaceForensic/manipulated_sequences/DeepFakeDetection/"
-default_video_dir = os.path.join(default_root_dir, "c23/videos/")
-default_mask_dir = os.path.join(default_root_dir, "masks/videos/")
+default_root_dir = "C:/Code/Projects/XRay/Data/FaceForensic/manipulated_sequences/"
+default_root_dir_with_dataset = default_root_dir + "**/"
+default_video_folder = "c23/videos/"
+default_mask_folder = "masks/videos/"
+default_video_dir = os.path.join(default_root_dir_with_dataset, default_video_folder)
+default_mask_dir = os.path.join(default_root_dir_with_dataset, default_mask_folder)
 
 default_real_root_dir = r"C:/Code/Projects/XRay/Data/FaceForensic/original_sequences/"
 default_real_video_dir = os.path.join(default_real_root_dir, "**/")
@@ -20,14 +23,21 @@ def load_video_paths(video_dir, mask_dir):
     video_mask_list = []
     valid_video_count = 0
     total_video_count = 0
-    for video_path in glob(video_dir + "*.mp4"):
+    for video_path in glob(video_dir + "*.mp4", recursive=True):
         assert video_path.endswith("mp4")
+        video_path = video_path.replace("\\", "/")
+        if mask_dir is not None:
+            dataset_name = re.search(default_root_dir + r"([^/\\]*)[/\\]" + default_video_folder, video_path).group(1)
+        else:
+            print(default_real_root_dir + r"([^/\\]*)[/\\](?:[^/\\]*)[/\\]", video_path)
+            dataset_name = re.search(default_real_root_dir + r"([^/\\]*)[/\\](?:[^/\\]*)[/\\]", video_path).group(1)
         video_name = re.search(r'[/\\]([\d\w_]+.mp4)', video_path).group(1)
         if mask_dir is None:  # real video
             mask_path = None
         else:
-            mask_path = os.path.join(mask_dir, video_name)
-            assert os.path.isfile(mask_path)
+            mask_path = os.path.join(default_root_dir, dataset_name, default_mask_folder, video_name)
+            if not os.path.isfile(mask_path):
+                break
         total_video_count += 1
         if mask_path is None or get_video_frame_count(video_path) == get_video_frame_count(mask_path):
             valid_video_count += 1
@@ -86,10 +96,9 @@ def show_image(image, title=""):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-def show_normalized_images(video_frame, mask_frame, is_fake):
+def show_normalized_images(video_frame, mask_frame, title):
     video_frame = video_frame.cpu().clone().detach().numpy()
     mask_frame = mask_frame.cpu().clone().detach().numpy()
-    is_fake = is_fake.cpu().clone().detach().numpy()
     mean = np.asarray([0.485, 0.456, 0.406])
     std = np.asarray([0.229, 0.224, 0.225])
     video_frame = video_frame.transpose((1, 2, 0))
@@ -100,7 +109,7 @@ def show_normalized_images(video_frame, mask_frame, is_fake):
     # video_frame = video_frame * 255
     # mask_frame = mask_frame * 255
     mask_frame = np.tile(mask_frame, [3])
-    show_image(np.vstack((video_frame, mask_frame)), str(is_fake))
+    show_image(np.vstack((video_frame, mask_frame)), title)
 
 
 def main():

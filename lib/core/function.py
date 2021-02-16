@@ -14,6 +14,7 @@ import logging
 import torch
 
 from lib.core.evaluate import cal_accuracy
+from lib.utils.utils import save_checkpoint
 
 from utils.image_preprocessing import show_normalized_images
 
@@ -92,6 +93,16 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
                 writer.add_scalar('accuracy', accuracy.val, global_steps)
                 writer_dict['train_global_steps'] = global_steps + 1
 
+        # if (i + 1) % config.SAVE_FREQ == 0:
+        #     logger.info('=> saving checkpoint to {}'.format(output_dir))
+        #     save_checkpoint({
+        #         'epoch': epoch + 1,
+        #         'model': config.MODEL.NAME,
+        #         'state_dict': model.module.state_dict(),
+        #         'perf': 0,
+        #         'optimizer': optimizer.state_dict(),
+        #     }, False, output_dir, filename='mini_checkpoint.pth.tar')
+
 
 def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_log_dir,
              writer_dict=None, show_image=False):
@@ -113,7 +124,9 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             output_x, output_c = model(input)
 
             if show_image:
-                show_normalized_images(input[0], output_x[0], target_c[0])
+                title = str(target_c[0].cpu().clone().detach().numpy()) + "   " + \
+                        str(output_c[0].cpu().clone().detach().numpy())
+                show_normalized_images(input[0], output_x[0], title)
 
             target_x = target_x.cuda(non_blocking=True)
             target_c = target_c.cuda(non_blocking=True)

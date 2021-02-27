@@ -22,7 +22,6 @@ def load_video_paths(video_dir, mask_dir):
         if mask_dir is not None:
             dataset_name = re.search(data_root_dir + r"([^/\\]*)[/\\]" + data_video_folder, video_path).group(1)
         else:
-            print(data_real_root_dir + r"([^/\\]*)[/\\](?:[^/\\]*)[/\\]", video_path)
             dataset_name = re.search(data_real_root_dir + r"([^/\\]*)[/\\](?:[^/\\]*)[/\\]", video_path).group(1)
         video_name = re.search(r'[/\\]([\d\w_]+.mp4)', video_path).group(1)
         if mask_dir is None:  # real video

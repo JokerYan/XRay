@@ -16,8 +16,8 @@ val_video_csv_path = os.path.join(data_csv_folder, "val_video.csv")
 
 # video to image
 image_output_dir = os.path.join(data_root_dir, "FaceForensicImage/")
-train_output_csv_path = os.path.join(data_csv_folder, "train_image.csv")
-val_output_csv_path = os.path.join(data_csv_folder, "val_image.csv")
+train_image_csv_path = os.path.join(data_csv_folder, "train_image.csv")
+val_image_csv_path = os.path.join(data_csv_folder, "val_image.csv")
 image_save_size = int(256 / 0.875)
 
 # video/image preprocessing
@@ -29,3 +29,7 @@ fake_video_dir = os.path.join(fake_root_dir_with_dataset, video_folder)
 fake_mask_dir = os.path.join(fake_root_dir_with_dataset, mask_folder)
 real_root_dir = os.path.join(data_root_dir, r"FaceForensic/original_sequences/")
 real_video_dir = os.path.join(real_root_dir, "**/")
+
+# select/balance data
+train_image_selected_csv_path = os.path.join(data_csv_folder, "train_image_selected.csv")
+val_image_selected_csv_path = os.path.join(data_csv_folder, "val_image_selected.csv")

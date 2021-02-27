@@ -7,7 +7,7 @@ from glob import glob
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
 
-from utils.data_config import train_video_csv_path, val_video_csv_path, train_output_csv_path, val_output_csv_path, \
+from utils.data_config import train_video_csv_path, val_video_csv_path, train_image_csv_path, val_image_csv_path, \
     image_output_dir, image_save_size
 from utils.video_to_csv import load_from_csv, write_to_csv, concate_csv
 
@@ -87,8 +87,8 @@ def detect_premature_image(image_path):
 
 def main():
     os.makedirs(image_output_dir, exist_ok=True)
-    save_all_frames_from_csv(train_video_csv_path, train_output_csv_path)
-    save_all_frames_from_csv(val_video_csv_path, val_output_csv_path)
+    save_all_frames_from_csv(train_video_csv_path, train_image_csv_path)
+    save_all_frames_from_csv(val_video_csv_path, val_image_csv_path)
 
     # # walk through all frames to ensure complete jpg saved
     # train_video_frame_list = load_from_csv(train_output_csv)

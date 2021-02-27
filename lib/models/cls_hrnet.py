@@ -519,7 +519,7 @@ class HighResolutionNet(nn.Module):
 
     def unfreeze_weights(self):
         for param in self.parameters():
-            param.requires_grad = False
+            param.requires_grad = True
 
 def get_cls_net(config, **kwargs):
     model = HighResolutionNet(config, **kwargs)

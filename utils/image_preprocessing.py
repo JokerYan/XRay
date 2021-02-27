@@ -75,7 +75,7 @@ def get_random_frame_from_list(video_mask_list):
 
 
 def get_blank_mask_from_size(size):
-    mask_frame = np.empty(size, dtype=np.float)
+    mask_frame = np.zeros(size, dtype=np.float)
     return mask_frame
 
 

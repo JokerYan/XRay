@@ -32,7 +32,6 @@ import torchvision.transforms as transforms
 # from utils.modelsummary import get_model_summary
 # from utils.utils import create_logger
 
-import _init_paths
 import lib.models.cls_hrnet as cls_hrnet
 from lib.models.xray_net import XRayNet
 import utils.image_transforms as custom_transforms

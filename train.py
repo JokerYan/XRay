@@ -36,7 +36,6 @@ from tensorboardX import SummaryWriter
 # from utils.utils import save_checkpoint
 # from utils.utils import create_logger
 
-import _init_paths
 import lib.models.cls_hrnet as cls_hrnet
 from lib.models.xray_net import XRayNet
 import utils.image_transforms as custom_transforms
@@ -80,7 +79,6 @@ def parse_args():
 
 def main():
     args = parse_args()
-
     logger, final_output_dir, tb_log_dir = create_logger(
         config, args.cfg, 'train')
 
@@ -113,7 +111,7 @@ def main():
     models_dst_dir = os.path.join(final_output_dir, 'models')
     if os.path.exists(models_dst_dir):
         shutil.rmtree(models_dst_dir)
-    shutil.copytree(os.path.join(this_dir, '../lib/models'), models_dst_dir)
+    shutil.copytree(os.path.join(this_dir, 'lib/models'), models_dst_dir)
 
     writer_dict = {
         'writer': SummaryWriter(log_dir=tb_log_dir),

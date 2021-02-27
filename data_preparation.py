@@ -31,7 +31,7 @@ def save_frame_from_video():
 
 def select_data():
     train_data_selected = balance_data(train_image_csv_path, ratio=0.5, dataset='Face2Face')
-    val_data_selected = balance_data(val_image_csv_path, dataset='Face2Face')
+    val_data_selected = balance_data(val_image_csv_path, ratio=0.5, dataset='Face2Face')
     with open(train_image_selected_csv_path, "w+") as csv_file:
         csv_file.write("\n".join(train_data_selected))
     with open(val_image_selected_csv_path, "w+") as csv_file:

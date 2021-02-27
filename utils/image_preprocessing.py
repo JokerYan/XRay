@@ -29,7 +29,7 @@ def load_video_paths(video_dir, mask_dir):
         else:
             mask_path = os.path.join(fake_root_dir, dataset_name, mask_folder, video_name)
             if not os.path.isfile(mask_path):
-                break
+                continue
         total_video_count += 1
         if mask_path is None or get_video_frame_count(video_path) == get_video_frame_count(mask_path):
             valid_video_count += 1

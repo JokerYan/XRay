@@ -6,17 +6,10 @@ import numpy as np
 from glob import glob
 from tqdm import tqdm
 
+from utils.data_config import data_root_dir, data_video_folder, data_real_root_dir, data_mask_folder, \
+    data_video_dir, data_mask_dir
 from utils.image_transforms import ImageToOne, MaskToXray
 
-default_root_dir = "C:/Code/Projects/XRay/Data/FaceForensic/manipulated_sequences/"
-default_root_dir_with_dataset = default_root_dir + "**/"
-default_video_folder = "c23/videos/"
-default_mask_folder = "masks/videos/"
-default_video_dir = os.path.join(default_root_dir_with_dataset, default_video_folder)
-default_mask_dir = os.path.join(default_root_dir_with_dataset, default_mask_folder)
-
-default_real_root_dir = r"C:/Code/Projects/XRay/Data/FaceForensic/original_sequences/"
-default_real_video_dir = os.path.join(default_real_root_dir, "**/")
 
 # set mask dir to None if it is a real video
 def load_video_paths(video_dir, mask_dir):
@@ -27,15 +20,15 @@ def load_video_paths(video_dir, mask_dir):
         assert video_path.endswith("mp4")
         video_path = video_path.replace("\\", "/")
         if mask_dir is not None:
-            dataset_name = re.search(default_root_dir + r"([^/\\]*)[/\\]" + default_video_folder, video_path).group(1)
+            dataset_name = re.search(data_root_dir + r"([^/\\]*)[/\\]" + data_video_folder, video_path).group(1)
         else:
-            print(default_real_root_dir + r"([^/\\]*)[/\\](?:[^/\\]*)[/\\]", video_path)
-            dataset_name = re.search(default_real_root_dir + r"([^/\\]*)[/\\](?:[^/\\]*)[/\\]", video_path).group(1)
+            print(data_real_root_dir + r"([^/\\]*)[/\\](?:[^/\\]*)[/\\]", video_path)
+            dataset_name = re.search(data_real_root_dir + r"([^/\\]*)[/\\](?:[^/\\]*)[/\\]", video_path).group(1)
         video_name = re.search(r'[/\\]([\d\w_]+.mp4)', video_path).group(1)
         if mask_dir is None:  # real video
             mask_path = None
         else:
-            mask_path = os.path.join(default_root_dir, dataset_name, default_mask_folder, video_name)
+            mask_path = os.path.join(data_root_dir, dataset_name, data_mask_folder, video_name)
             if not os.path.isfile(mask_path):
                 break
         total_video_count += 1
@@ -113,7 +106,7 @@ def show_normalized_images(video_frame, mask_frame, title):
 
 
 def main():
-    video_mask_list = load_video_paths(default_video_dir, default_mask_dir)
+    video_mask_list = load_video_paths(data_video_dir, data_mask_dir)
     video_frame, mask_frame = get_random_frame_from_list(video_mask_list)
     sample = {'video_frame': video_frame, 'mask_frame': mask_frame}
     to_one_transformer = ImageToOne()

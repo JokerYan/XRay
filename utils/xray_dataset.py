@@ -5,7 +5,7 @@ import numpy as np
 from torch.utils.data import Dataset
 
 from utils.image_preprocessing import load_video_paths, get_video_frame_count, get_frame_from_video, get_blank_mask_from_size
-from utils.data_preperation import load_from_csv
+from utils.video_to_csv import load_from_csv
 
 bucket_frame_count = 5000
 

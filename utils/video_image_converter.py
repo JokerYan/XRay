@@ -7,14 +7,10 @@ from glob import glob
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
 
-from utils.data_preperation import load_from_csv, write_to_csv, concate_csv
+from utils.data_config import train_video_csv_path, val_video_csv_path, train_output_csv_path, val_output_csv_path, \
+    image_output_dir, image_save_size
+from utils.video_to_csv import load_from_csv, write_to_csv, concate_csv
 
-output_dir = r"C:/Code/Projects/XRay/Data/FaceForensicImage/"
-train_input_csv = "./data/train_video.csv"
-train_output_csv = "./data/train_image.csv"
-val_input_csv = "./data/val_video.csv"
-val_output_csv = "./data/val_image.csv"
-target_size = int(256 / 0.875)
 
 # output_dir = r"C:/Code/Projects/XRay/Data/FaceForensicImage/"
 # train_input_csv = "./data/train_video_youtube.csv"
@@ -61,7 +57,7 @@ def save_video_frames(src_path, suffix, overwrite=False):
     save_paths = []
     for i in range(frame_count):
         output_name = dataset + "_" + video_name + "_" + suffix + "_" + str(i) + ".jpg"
-        output_video_dir = os.path.join(output_dir, dataset + "_" + video_name)
+        output_video_dir = os.path.join(image_output_dir, dataset + "_" + video_name)
         if not os.path.isdir(output_video_dir):
             os.makedirs(output_video_dir, exist_ok=True)
         output_path = os.path.join(output_video_dir, output_name)
@@ -73,7 +69,7 @@ def save_video_frames(src_path, suffix, overwrite=False):
         if frame is None:
             print(src_path, i)
             continue
-        frame = cv2.resize(frame, (target_size, target_size), interpolation=cv2.INTER_AREA)
+        frame = cv2.resize(frame, (image_save_size, image_save_size), interpolation=cv2.INTER_AREA)
         if overwrite or not os.path.isfile(output_path):
             cv2.imwrite(output_path, frame)
         save_paths.append(output_path)
@@ -90,9 +86,9 @@ def detect_premature_image(image_path):
 
 
 def main():
-    os.makedirs(output_dir, exist_ok=True)
-    save_all_frames_from_csv(train_input_csv, train_output_csv)
-    save_all_frames_from_csv(val_input_csv, val_output_csv)
+    os.makedirs(image_output_dir, exist_ok=True)
+    save_all_frames_from_csv(train_video_csv_path, train_output_csv_path)
+    save_all_frames_from_csv(val_video_csv_path, val_output_csv_path)
 
     # # walk through all frames to ensure complete jpg saved
     # train_video_frame_list = load_from_csv(train_output_csv)

@@ -93,15 +93,15 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
                 writer.add_scalar('accuracy', accuracy.val, global_steps)
                 writer_dict['train_global_steps'] = global_steps + 1
 
-        # if (i + 1) % config.SAVE_FREQ == 0:
-        #     logger.info('=> saving checkpoint to {}'.format(output_dir))
-        #     save_checkpoint({
-        #         'epoch': epoch + 1,
-        #         'model': config.MODEL.NAME,
-        #         'state_dict': model.module.state_dict(),
-        #         'perf': 0,
-        #         'optimizer': optimizer.state_dict(),
-        #     }, False, output_dir, filename='mini_checkpoint.pth.tar')
+        if (i + 1) % config.SAVE_FREQ == 0:
+            logger.info('=> saving checkpoint to {}'.format(output_dir))
+            save_checkpoint({
+                'epoch': epoch,
+                'model': config.MODEL.NAME,
+                'state_dict': model.module.state_dict(),
+                'perf': 0,
+                'optimizer': optimizer.state_dict(),
+            }, False, output_dir, filename='mini_checkpoint.pth.tar')
 
 
 def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_log_dir,

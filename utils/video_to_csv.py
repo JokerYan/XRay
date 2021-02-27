@@ -3,18 +3,14 @@ import random
 import numpy as np
 from glob import glob
 
+from utils.data_config import train_val_ratio, data_csv_folder, train_video_csv_path, val_video_csv_path
 from utils.image_preprocessing import load_video_paths, get_video_frame_count
-from utils.image_preprocessing import default_video_dir, default_mask_dir, default_real_video_dir
 
 # train_val_ratio = 0.7
 # data_folder = "./data/"
 # train_out_path = os.path.join(data_folder, "train_video.csv")
 # val_out_path = os.path.join(data_folder, "val_video.csv")
 
-train_val_ratio = 0.85
-data_folder = "./data/"
-train_out_path = os.path.join(data_folder, "train_video.csv")
-val_out_path = os.path.join(data_folder, "val_video.csv")
 
 def write_to_csv(csv_path, video_paths):
     print("writing paths to {}".format(csv_path))

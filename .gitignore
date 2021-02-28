@@ -1,5 +1,6 @@
 log/
 output/
 data/
+hrnetv2_w64_imagenet_pretrained.pth
 
 *.pyc

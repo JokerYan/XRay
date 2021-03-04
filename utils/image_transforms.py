@@ -15,13 +15,18 @@ class ImageToOne:
 
 
 class MaskToXray:
+    def threshold(self, src):
+        dst = np.where(src > 0.2, 1.0, 0.0)
+        return dst
+
     def blur(self, src, kernal_size=3):
         kernal = np.ones((kernal_size, kernal_size), np.float32) / (kernal_size ** 2)
         dst = cv2.filter2D(src, -1, kernal)
         return dst
 
     def __call__(self, sample):
-        blurred = self.blur(sample['mask_frame'])
+        thresh = self.threshold(sample['mask_frame'])
+        blurred = self.blur(thresh)
         xray = 4 * np.multiply(blurred, np.ones_like(blurred) - blurred)
         return {'video_frame': sample['video_frame'], 'mask_frame': xray, 'is_fake': sample['is_fake']}
 

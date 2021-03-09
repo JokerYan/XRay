@@ -5,13 +5,14 @@ import random
 import numpy as np
 from glob import glob
 from tqdm import tqdm
+import torchvision.transforms as transforms
 
+from lib.config import config
 from utils.data_config import fake_root_dir, video_folder, real_root_dir, mask_folder, \
     fake_video_dir, fake_mask_dir
-from utils.image_transforms import ImageToOne, MaskToXray
+import utils.image_transforms as custom_transforms
 
 
-# set mask dir to None if it is a real video
 def load_video_paths(video_dir, mask_dir):
     video_mask_list = []
     valid_video_count = 0
@@ -105,14 +106,36 @@ def show_normalized_images(video_frame, mask_frame, title):
 
 
 def main():
-    video_mask_list = load_video_paths(fake_video_dir, fake_mask_dir)
-    video_frame, mask_frame = get_random_frame_from_list(video_mask_list)
-    sample = {'video_frame': video_frame, 'mask_frame': mask_frame}
-    to_one_transformer = ImageToOne()
-    to_xray_transformer = MaskToXray()
-    sample = to_one_transformer(sample)
-    sample = to_xray_transformer(sample)
-    # show_image(np.vstack((sample['video_frame'], sample['mask_frame'])))
+    # video_mask_list = load_from_csv('./data/train_image_selected.csv')
+    video_mask_list = []
+    with open('./data/train_image_selected.csv', "r") as csv_file:
+        for line in csv_file:
+            line_parts = line.strip().split(",")
+            video_path = line_parts[0]
+            mask_path = line_parts[1] if line_parts[1] else None
+            is_fake = np.float32(line_parts[2])
+            video_mask_list.append([video_path, mask_path, is_fake])
+    # video_mask_list = load_video_paths(fake_video_dir, fake_mask_dir)
+    # video_frame, mask_frame = get_random_frame_from_list(video_mask_list)
+    video_path, mask_path, _ = video_mask_list[random.randint(0, len(video_mask_list) - 1)]
+    video_frame = cv2.imread(video_path)
+    if mask_path:
+        mask_frame = cv2.imread(mask_path)
+    else:
+        mask_frame = get_blank_mask_from_size(video_frame.shape)
+    sample = {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': 1}
+    transform = transforms.Compose([
+        custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),
+        custom_transforms.RandomCrop(config.MODEL.IMAGE_SIZE[0]),
+        custom_transforms.PiecewiseAffine(),
+        custom_transforms.Affine(),
+        custom_transforms.LinearContrast(),
+        # custom_transforms.ImageToOne(),
+        custom_transforms.MaskToXray(),
+    ])
+    sample = transform(sample)
+    show_image(np.vstack((sample['video_frame'], sample['mask_frame'])))
+    # show_image(sample['video_frame'])
 
     # count_list = []
     # for video, mask in tqdm(video_mask_list):

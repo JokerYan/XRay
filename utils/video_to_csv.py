@@ -35,6 +35,7 @@ def load_from_csv(csv_path):
             out_list.append([video_path, mask_path, is_fake])
     return out_list
 
+
 def concate_csv(csv_path1, csv_path2, csv_path_output):
     with open(csv_path1, 'r') as csv_file:
         csv_content_1 = csv_file.read()

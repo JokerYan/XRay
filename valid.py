@@ -145,8 +145,7 @@ def main():
         './data/val_image_selected.csv',
          transforms.Compose([
              # TODO: Change Random Crop to Centre Crop
-             custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),
-             custom_transforms.RandomCrop(config.MODEL.IMAGE_SIZE[0]),
+             custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0])),
              custom_transforms.ImageToOne(),
              custom_transforms.MaskToXray(),
              custom_transforms.ToTensor(),

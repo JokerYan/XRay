@@ -4,6 +4,9 @@ import numpy as np
 from skimage import transform as skimage_transforms
 import torchvision.transforms as torch_transforms
 
+import imgaug as ia
+import imgaug.augmenters as iaa
+
 
 class ImageToOne:
     def __call__(self, sample):
@@ -92,6 +95,43 @@ class RandomCrop(object):
         video_frame = video_frame[top: top + new_h, left: left + new_w]
         mask_frame = mask_frame[top: top + new_h, left: left + new_w]
 
+        return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
+
+
+class PiecewiseAffine(object):
+    def __init__(self):
+        self.ia_piece_affine = iaa.PiecewiseAffine(scale=(0, 0.02))
+
+    def __call__(self, sample):
+        ia_piece_affine_det = self.ia_piece_affine.to_deterministic()
+        video_frame = ia_piece_affine_det(image=sample['video_frame'])
+        mask_frame = ia_piece_affine_det(image=sample['mask_frame'])
+        return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
+
+
+class Affine(object):
+    def __init__(self):
+        self.ia_affine = iaa.Affine(
+            translate_percent={"x": (-0.1, 0.1), "y": (-0.1, 0.1)},
+            rotate=(-10, 10),
+            shear=(-8, 8)
+        )
+
+    def __call__(self, sample):
+        ia_affine_det = self.ia_affine.to_deterministic()
+        video_frame = ia_affine_det(image=sample['video_frame'])
+        mask_frame = ia_affine_det(image=sample['mask_frame'])
+        return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
+
+
+class LinearContrast(object):
+    def __init__(self):
+        self.linear_contrast = iaa.LinearContrast((0.9, 1.1), per_channel=True)
+
+    def __call__(self, sample):
+        linear_contrast_det = self.linear_contrast.to_deterministic()
+        video_frame = linear_contrast_det(image=sample['video_frame'])
+        mask_frame = sample['mask_frame']
         return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
 
 

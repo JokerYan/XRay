@@ -8,7 +8,7 @@ from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
 
 from utils.data_config import train_video_csv_path, val_video_csv_path, train_image_csv_path, val_image_csv_path, \
-    image_output_dir, image_save_size
+    image_output_dir, image_save_size, skip_frame
 from utils.video_to_csv import load_from_csv, write_to_csv, concate_csv
 
 
@@ -55,7 +55,7 @@ def save_video_frames(src_path, suffix, overwrite=False):
     cap = cv2.VideoCapture(src_path)
     frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     save_paths = []
-    for i in range(frame_count):
+    for i in range(0, frame_count, skip_frame):
         output_name = dataset + "_" + video_name + "_" + suffix + "_" + str(i) + ".jpg"
         output_video_dir = os.path.join(image_output_dir, dataset + "_" + video_name)
         if not os.path.isdir(output_video_dir):

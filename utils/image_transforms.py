@@ -104,11 +104,9 @@ class PiecewiseAffine(object):
         self.ia_piece_affine = iaa.PiecewiseAffine(scale=(0, 0.02))
 
     def __call__(self, sample):
-        start_time = time.time()
         ia_piece_affine_det = self.ia_piece_affine.to_deterministic()
         video_frame = ia_piece_affine_det(image=sample['video_frame'])
         mask_frame = ia_piece_affine_det(image=sample['mask_frame'])
-        print('Piecewise Affine', time.time() - start_time)
         return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
 
 
@@ -121,11 +119,9 @@ class Affine(object):
         )
 
     def __call__(self, sample):
-        start_time = time.time()
         ia_affine_det = self.ia_affine.to_deterministic()
         video_frame = ia_affine_det(image=sample['video_frame'])
         mask_frame = ia_affine_det(image=sample['mask_frame'])
-        print('Affine', time.time() - start_time)
         return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
 
 
@@ -134,11 +130,9 @@ class LinearContrast(object):
         self.linear_contrast = iaa.LinearContrast((0.9, 1.1))
 
     def __call__(self, sample):
-        start_time = time.time()
         linear_contrast_det = self.linear_contrast.to_deterministic()
         video_frame = linear_contrast_det(image=sample['video_frame'])
         mask_frame = sample['mask_frame']
-        print('Contrast', time.time() - start_time)
         return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
 
 

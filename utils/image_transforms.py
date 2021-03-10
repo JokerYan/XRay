@@ -1,5 +1,6 @@
 import cv2
 import torch
+import time
 import numpy as np
 from skimage import transform as skimage_transforms
 import torchvision.transforms as torch_transforms
@@ -103,35 +104,41 @@ class PiecewiseAffine(object):
         self.ia_piece_affine = iaa.PiecewiseAffine(scale=(0, 0.02))
 
     def __call__(self, sample):
+        start_time = time.time()
         ia_piece_affine_det = self.ia_piece_affine.to_deterministic()
         video_frame = ia_piece_affine_det(image=sample['video_frame'])
         mask_frame = ia_piece_affine_det(image=sample['mask_frame'])
+        print('Piecewise Affine', time.time() - start_time)
         return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
 
 
 class Affine(object):
     def __init__(self):
         self.ia_affine = iaa.Affine(
-            translate_percent={"x": (-0.1, 0.1), "y": (-0.1, 0.1)},
-            rotate=(-10, 10),
-            shear=(-8, 8)
+            translate_percent={"x": (-0.05, 0.05), "y": (-0.05, 0.05)},
+            rotate=(-5, 5),
+            shear=(-5, 5)
         )
 
     def __call__(self, sample):
+        start_time = time.time()
         ia_affine_det = self.ia_affine.to_deterministic()
         video_frame = ia_affine_det(image=sample['video_frame'])
         mask_frame = ia_affine_det(image=sample['mask_frame'])
+        print('Affine', time.time() - start_time)
         return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
 
 
 class LinearContrast(object):
     def __init__(self):
-        self.linear_contrast = iaa.LinearContrast((0.9, 1.1), per_channel=True)
+        self.linear_contrast = iaa.LinearContrast((0.9, 1.1))
 
     def __call__(self, sample):
+        start_time = time.time()
         linear_contrast_det = self.linear_contrast.to_deterministic()
         video_frame = linear_contrast_det(image=sample['video_frame'])
         mask_frame = sample['mask_frame']
+        print('Contrast', time.time() - start_time)
         return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
 
 

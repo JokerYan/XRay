@@ -168,7 +168,7 @@ def main():
         transforms.Compose([
          custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),
          custom_transforms.RandomCrop(config.MODEL.IMAGE_SIZE[0]),
-         custom_transforms.PiecewiseAffine(),
+         # custom_transforms.PiecewiseAffine(),
          custom_transforms.Affine(),
          custom_transforms.LinearContrast(),
          custom_transforms.ImageToOne(),

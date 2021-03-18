@@ -15,7 +15,7 @@ train_video_csv_path = os.path.join(data_csv_folder, "train_video.csv")
 val_video_csv_path = os.path.join(data_csv_folder, "val_video.csv")
 
 # video to image
-skip_frame = 30
+skip_frame = 5
 image_output_dir = os.path.join(data_root_dir, "FaceForensicImage/")
 train_image_csv_path = os.path.join(data_csv_folder, "train_image.csv")
 val_image_csv_path = os.path.join(data_csv_folder, "val_image.csv")

@@ -130,6 +130,7 @@ def main():
         custom_transforms.PiecewiseAffine(),
         custom_transforms.Affine(),
         custom_transforms.LinearContrast(),
+        custom_transforms.HueAndSaturation(),
         # custom_transforms.ImageToOne(),
         custom_transforms.MaskToXray(),
     ])

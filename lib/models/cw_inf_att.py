@@ -40,6 +40,7 @@ class CWInfAttack(nn.Module):
             delta = self.w_to_delta(w, images)
             distance = self.inf_distance(delta, tau)
             loss = f_value + distance
+            print(loss)
 
             # compute gradient and do update step
             optimizer.zero_grad()

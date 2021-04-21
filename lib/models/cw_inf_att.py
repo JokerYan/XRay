@@ -1,4 +1,4 @@
-import cv2
+import pickle
 import torch
 import torch.nn as nn
 import torchvision.transforms as torch_transforms
@@ -72,7 +72,7 @@ class CWInfAttack(nn.Module):
                 best_acc = acc
                 best_delta = avg_delta
         print('Batch finished: Acc: {}\tDelta: {}'.format(best_acc, best_delta))
-        cv2.imshow('adv image', best_adv_images[0])
+        pickle.dump(best_adv_images, open('adv_images_batch.pkl', 'wb'))
         return best_adv_images, best_acc, best_delta
 
     def get_f_value(self, outputs):

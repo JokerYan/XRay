@@ -75,10 +75,15 @@ def parse_args():
     args = parser.parse_args()
     update_config(config, args)
 
-    return args
+    return args, config
+
+def construct_model():
+    args, config = parse_args()
+    model = XRayNet(config)
+    return model, config
 
 def main():
-    args = parse_args()
+    args, config = parse_args()
     logger, final_output_dir, tb_log_dir = create_logger(
         config, args.cfg, 'train')
 

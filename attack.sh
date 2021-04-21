@@ -1,0 +1,1 @@
+python attack.py --cfg experiments/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml --testModel hrnetv2_w64_imagenet_pretrained.pth --dataDir C:/Code/Projects/XRay/Data/

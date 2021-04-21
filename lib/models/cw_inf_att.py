@@ -1,13 +1,22 @@
 import torch
+import torch.nn as nn
 from lib.core.evaluate import cal_accuracy
 
-class CWInfAttack():
-    def __init__(self, model, c, lr, steps, device='cuda'):
+class CWInfAttack(nn.Module):
+    '''
+    c:  coefficient of f value to be added to distance.
+        Higher the c, higher the success rate and higher the distance
+        see fig 2 of paper
+    '''
+    def __init__(self, model, c, lr, momentum, steps, device='cuda'):
+        super(CWInfAttack, self).__init__()
+
         self.model = model
         self.c = c
         self.lr = lr
         self.steps = steps
         self.device = device
+        self.momentum = momentum
 
     def forward(self, images, labels):
         images = images.clone().detach().to(self.device)
@@ -21,7 +30,7 @@ class CWInfAttack():
         best_adv_images = images.clone().detach()
         best_L_inf = 1e10*torch.ones((len(images))).to(self.device)
 
-        optimizer = torch.optim.Adam([w], lr=self.lr)
+        optimizer = torch.optim.SGD([w], lr=self.lr, momentum=self.momentum)
 
         for step in range(self.steps):
             adv_images = self.w_to_adv_images(w)

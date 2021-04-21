@@ -24,7 +24,7 @@ def write_to_csv(csv_path, video_paths):
         out_file.write("\n".join(lines))
 
 
-def load_from_csv(csv_path):
+def load_from_csv(csv_path, target_class=None):
     out_list = []
     with open(csv_path, "r") as csv_file:
         for line in csv_file:
@@ -32,7 +32,8 @@ def load_from_csv(csv_path):
             video_path = line_parts[0]
             mask_path = line_parts[1] if line_parts[1] else None
             is_fake = np.float32(line_parts[2])
-            out_list.append([video_path, mask_path, is_fake])
+            if target_class is not None and is_fake == target_class:
+                out_list.append([video_path, mask_path, is_fake])
     return out_list
 
 

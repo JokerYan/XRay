@@ -39,6 +39,7 @@ def main():
         target_class=1,  # only load fake ones
     )
 
+    gpus = list(target_config.GPUS)
     valid_loader = torch.utils.data.DataLoader(
         valid_dataset,
         batch_size=config_json['batch_size']*len(gpus),

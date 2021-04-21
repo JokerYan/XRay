@@ -23,6 +23,8 @@ class CWInfAttack(nn.Module):
         labels = labels.clone().detach().to(self.device)
         dummy_labels = torch.zeros(images.shape[0])
         w = self.get_init_w(images).detach()
+        print(images)
+        print(w)
         w.requires_grad = True
 
         tau = 1
@@ -33,7 +35,6 @@ class CWInfAttack(nn.Module):
         optimizer = torch.optim.SGD([w], lr=self.lr, momentum=self.momentum)
 
         for step in range(self.steps):
-            print(w)
             adv_images = self.w_to_adv_images(w)
             _, output_c = self.model(adv_images)
 

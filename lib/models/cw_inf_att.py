@@ -37,7 +37,7 @@ class CWInfAttack(nn.Module):
 
         best_adv_images = images.clone().detach()
         best_acc = 0
-        best_delta = torch.ones_like(images)
+        best_delta = 1
 
         optimizer = torch.optim.SGD([w], lr=self.lr, momentum=self.momentum)
 

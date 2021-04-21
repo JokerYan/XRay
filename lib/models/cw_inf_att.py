@@ -44,6 +44,8 @@ class CWInfAttack(nn.Module):
             _, output_c = self.model(self.Normalize(adv_images))
 
             f_value = self.c * self.get_f_value(output_c)
+            print(output_c)
+            print(f_value)
             delta = self.w_to_delta(w, images)
             distance = self.inf_distance(delta, tau)
             loss = f_value + distance
@@ -69,8 +71,6 @@ class CWInfAttack(nn.Module):
         return torch.sum(dist_vec)
 
     def w_to_adv_images(self, w):
-        print(w)
-        print(1/2 * (torch.tanh(w) + 1))
         return 1/2 * (torch.tanh(w) + 1)
 
     def w_to_delta(self, w, x):

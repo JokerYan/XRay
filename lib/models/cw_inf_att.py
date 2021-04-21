@@ -35,7 +35,8 @@ class CWInfAttack(nn.Module):
         tau = 1
 
         best_adv_images = images.clone().detach()
-        best_L_inf = 1e10*torch.ones((len(images))).to(self.device)
+        best_acc = 0
+        best_delta = torch.zeros_like(images)
 
         optimizer = torch.optim.SGD([w], lr=self.lr, momentum=self.momentum)
 
@@ -48,6 +49,10 @@ class CWInfAttack(nn.Module):
             distance = self.inf_distance(delta, tau)
             loss = f_value + distance
 
+            # update tau
+            if torch.max(delta) < tau:
+                tau = 0.9 * tau
+
             # compute gradient and do update step
             optimizer.zero_grad()
             loss.sum().backward()
@@ -57,6 +62,11 @@ class CWInfAttack(nn.Module):
             acc = cal_accuracy(output_c, dummy_labels)
             avg_delta = torch.mean(delta)
             print('Acc: {}\tDelta: {}'.format(acc, avg_delta))
+            if acc > best_acc:
+                best_adv_images = adv_images
+                best_delta = avg_delta
+        print('Image adv finished: Acc: {}\tDelta: {}'.format(best_acc, best_delta))
+
 
     def get_f_value(self, outputs):
         src_p = outputs[:]  # class 1

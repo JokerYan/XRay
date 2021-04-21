@@ -31,6 +31,7 @@ class CWInfAttack(nn.Module):
         dummy_labels = torch.zeros(images.shape[0])
         w = self.get_init_w(images).detach()
         w.requires_grad = True
+        images.requires_grad = False
 
         tau = 1
 

@@ -33,9 +33,8 @@ class CWInfAttack(nn.Module):
         optimizer = torch.optim.SGD([w], lr=self.lr, momentum=self.momentum)
 
         for step in range(self.steps):
+            print(w)
             adv_images = self.w_to_adv_images(w)
-            print(adv_images[0])
-            print(images[0])
             _, output_c = self.model(adv_images)
 
             f_value = self.c * self.get_f_value(output_c)

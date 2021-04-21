@@ -56,6 +56,7 @@ def load_target_model(model_path):
     model, target_config = construct_model()
     state_dict = torch.load(model_path)
     model.load_state_dict(state_dict)
+    model = model.cuda()
     return model, target_config
 
 

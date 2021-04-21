@@ -3,5 +3,6 @@
   "c": 1,
   "lr": 0.1,
   "momentum": 0.9,
-  "steps": 50
+  "steps": 50,
+  "batch_size": 16
 }

@@ -23,6 +23,8 @@ def main():
     )
     attack_model = attack_model.cuda()
 
+    # image normalized right before passing to model
+    # original image needed for attack
     valid_dataset = XRayDataset(
         './data/val_image_selected.csv',
         transforms.Compose([
@@ -31,8 +33,8 @@ def main():
             custom_transforms.ImageToOne(),
             custom_transforms.MaskToXray(),
             custom_transforms.ToTensor(),
-            custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                        std=[0.229, 0.224, 0.225])
+            # custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
+            #                             std=[0.229, 0.224, 0.225])
         ]),
         target_class=1,  # only load fake ones
     )

@@ -1,5 +1,7 @@
 import torch
 import torch.nn as nn
+import torchvision.transforms as torch_transforms
+
 from lib.core.evaluate import cal_accuracy
 
 class CWInfAttack(nn.Module):
@@ -17,14 +19,16 @@ class CWInfAttack(nn.Module):
         self.steps = steps
         self.device = device
         self.momentum = momentum
+        self.Normalize = torch_transforms.Normalize(
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225]
+        )
 
     def forward(self, images, labels):
         images = images.clone().detach().to(self.device)
         labels = labels.clone().detach().to(self.device)
         dummy_labels = torch.zeros(images.shape[0])
         w = self.get_init_w(images).detach()
-        print(images)
-        print(w)
         w.requires_grad = True
 
         tau = 1
@@ -36,7 +40,7 @@ class CWInfAttack(nn.Module):
 
         for step in range(self.steps):
             adv_images = self.w_to_adv_images(w)
-            _, output_c = self.model(adv_images)
+            _, output_c = self.model(self.Normalize(adv_images))
 
             f_value = self.c * self.get_f_value(output_c)
             delta = self.w_to_delta(w, images)

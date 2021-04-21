@@ -51,9 +51,10 @@ class CWInfAttack(nn.Module):
             avg_delta = torch.mean(delta)
             print('Acc: {}\tDelta: {}'.format(acc, avg_delta))
 
-    def get_f_value(self, outputs, src_c=1, target_c=0):
-        print(outputs.shape)
-        f6 = torch.relu(outputs[:, src_c] - outputs[:, target_c])
+    def get_f_value(self, outputs):
+        src_p = outputs[:]  # class 1
+        target_p = 1 - outputs[:]  # class 0
+        f6 = torch.relu(src_p - target_p)
         return f6
 
     def inf_distance(self, delta, tau):

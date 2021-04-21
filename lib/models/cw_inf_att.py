@@ -52,7 +52,7 @@ class CWInfAttack(nn.Module):
 
             # compute gradient and do update step
             optimizer.zero_grad()
-            loss.backward()
+            loss.sum().backward()
             optimizer.step()
 
             # print out results

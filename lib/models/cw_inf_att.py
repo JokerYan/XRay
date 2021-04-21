@@ -69,6 +69,8 @@ class CWInfAttack(nn.Module):
         return torch.sum(dist_vec)
 
     def w_to_adv_images(self, w):
+        print(w)
+        print(1/2 * (torch.tanh(w) + 1))
         return 1/2 * (torch.tanh(w) + 1)
 
     def w_to_delta(self, w, x):
@@ -77,6 +79,4 @@ class CWInfAttack(nn.Module):
     def get_init_w(self, x):
         x = torch.where(x == 0, torch.ones_like(x) * self.margin, x)
         x = torch.where(x == 1, torch.ones_like(x) * (1 - self.margin), x)
-        print(x)
-        print(torch.atanh(2 * x - 1))
         return torch.atanh(2 * x - 1)

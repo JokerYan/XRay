@@ -74,4 +74,6 @@ class CWInfAttack(nn.Module):
         return self.w_to_adv_images(w) - x
 
     def get_init_w(self, x):
+        print(x)
+        print(torch.atanh(2 * x - 1))
         return torch.atanh(2 * x - 1)

@@ -39,7 +39,6 @@ def main():
         target_class=1,  # only load fake ones
     )
 
-    gpus = list(target_config.GPUS)
     valid_loader = torch.utils.data.DataLoader(
         valid_dataset,
         batch_size=config_json['batch_size']*len(gpus),
@@ -60,6 +59,8 @@ def load_target_model(model_path):
     state_dict = torch.load(model_path)
     model.load_state_dict(state_dict)
     model = model.cuda()
+    gpus = list(target_config.GPUS)
+    model = torch.nn.DataParallel(model, device_ids=gpus).cuda()
     return model, target_config
 
 

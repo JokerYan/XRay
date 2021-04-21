@@ -23,12 +23,12 @@ class CWInfAttack(nn.Module):
             mean=[0.485, 0.456, 0.406],
             std=[0.229, 0.224, 0.225]
         )
-        self.margin = 0.00001  # used to handle x = 0 or x = 1
+        # self.margin = 0.00001  # used to handle x = 0 or x = 1
 
     def forward(self, images, labels):
         images = images.clone().detach().to(self.device)
         labels = labels.clone().detach().to(self.device)
-        dummy_labels = torch.zeros(images.shape[0])
+        dummy_labels = torch.zeros(images.shape[0]).to(self.device)
         w = self.get_init_w(images).detach()
         w.requires_grad = True
         images.requires_grad = False
@@ -77,6 +77,6 @@ class CWInfAttack(nn.Module):
         return self.w_to_adv_images(w) - x
 
     def get_init_w(self, x):
-        x = torch.where(x == 0, torch.ones_like(x) * self.margin, x)
-        x = torch.where(x == 1, torch.ones_like(x) * (1 - self.margin), x)
+        # x = torch.where(x == 0, torch.ones_like(x) * self.margin, x)
+        # x = torch.where(x == 1, torch.ones_like(x) * (1 - self.margin), x)
         return torch.atanh(2 * x - 1)

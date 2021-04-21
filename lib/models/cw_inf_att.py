@@ -23,7 +23,6 @@ class CWInfAttack(nn.Module):
             mean=[0.485, 0.456, 0.406],
             std=[0.229, 0.224, 0.225]
         )
-        # self.margin = 0.00001  # used to handle x = 0 or x = 1
 
     def forward(self, images, labels):
         images = images.clone().detach().to(self.device)
@@ -48,7 +47,6 @@ class CWInfAttack(nn.Module):
             delta = self.w_to_delta(w, images)
             distance = self.inf_distance(delta, tau)
             loss = f_value + distance
-            print(loss)
 
             # compute gradient and do update step
             optimizer.zero_grad()
@@ -77,6 +75,4 @@ class CWInfAttack(nn.Module):
         return self.w_to_adv_images(w) - x
 
     def get_init_w(self, x):
-        # x = torch.where(x == 0, torch.ones_like(x) * self.margin, x)
-        # x = torch.where(x == 1, torch.ones_like(x) * (1 - self.margin), x)
         return torch.atanh(2 * x - 1)

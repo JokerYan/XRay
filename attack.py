@@ -21,6 +21,7 @@ def main():
         config_json['momentum'],
         config_json['steps'],
     )
+    attack_model = attack_model.cuda()
 
     valid_dataset = XRayDataset(
         './data/val_image_selected.csv',

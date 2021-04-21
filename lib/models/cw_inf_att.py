@@ -34,13 +34,14 @@ class CWInfAttack(nn.Module):
 
         for step in range(self.steps):
             adv_images = self.w_to_adv_images(w)
+            print(adv_images[0])
+            print(images[0])
             _, output_c = self.model(adv_images)
 
             f_value = self.c * self.get_f_value(output_c)
             delta = self.w_to_delta(w, images)
             distance = self.inf_distance(delta, tau)
             loss = f_value + distance
-            print(output_c)
 
             # compute gradient and do update step
             optimizer.zero_grad()

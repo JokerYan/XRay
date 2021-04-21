@@ -52,6 +52,7 @@ class CWInfAttack(nn.Module):
             print('Acc: {}\tDelta: {}'.format(acc, avg_delta))
 
     def get_f_value(self, outputs, src_c=1, target_c=0):
+        print(outputs.shape)
         f6 = torch.relu(outputs[:, src_c] - outputs[:, target_c])
         return f6
 

@@ -77,4 +77,6 @@ class CWInfAttack(nn.Module):
     def get_init_w(self, x):
         x = torch.where(x == 0, torch.ones_like(x) * self.margin, x)
         x = torch.where(x == 1, torch.ones_like(x) * (1 - self.margin), x)
+        print(x)
+        print(torch.atanh(2 * x - 1))
         return torch.atanh(2 * x - 1)

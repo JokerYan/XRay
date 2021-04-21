@@ -83,7 +83,7 @@ class CWInfAttack(nn.Module):
         return 1/2 * (torch.tanh(w) + 1)
 
     def w_to_delta(self, w, x):
-        return self.w_to_adv_images(w) - x
+        return torch.abs(self.w_to_adv_images(w) - x)
 
     def get_init_w(self, x):
         return torch.atanh(2 * x - 1)

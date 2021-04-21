@@ -64,6 +64,7 @@ class CWInfAttack(nn.Module):
             print('Acc: {}\tDelta: {}'.format(acc, avg_delta))
             if acc > best_acc:
                 best_adv_images = adv_images
+                best_acc = acc
                 best_delta = avg_delta
         print('Image adv finished: Acc: {}\tDelta: {}'.format(best_acc, best_delta))
 

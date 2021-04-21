@@ -48,11 +48,20 @@ def main():
         pin_memory=True
     )
 
+    best_acc_list = []
+    best_delta_list = []
     for i, data in enumerate(valid_loader):
         input = data['video_frame']
         target_x = data['mask_frame']
         target_c = data['is_fake']
-        attack_model(input, target_c)
+        best_adv_images, best_acc, best_delta = attack_model(input, target_c)
+        best_acc_list.append(best_acc)
+        best_delta_list.append(best_delta)
+    print('===== Attack finished =====')
+    print('Avg Acc: {}\tAvg Delta: {}'.format(
+        sum(best_acc_list) / len(best_acc_list),
+        sum(best_delta_list) / len(best_delta_list)
+    ))
 
 
 def load_target_model(model_path):

@@ -1,3 +1,4 @@
+import cv2
 import torch
 import torch.nn as nn
 import torchvision.transforms as torch_transforms
@@ -36,7 +37,7 @@ class CWInfAttack(nn.Module):
 
         best_adv_images = images.clone().detach()
         best_acc = 0
-        best_delta = torch.zeros_like(images)
+        best_delta = torch.ones_like(images)
 
         optimizer = torch.optim.SGD([w], lr=self.lr, momentum=self.momentum)
 
@@ -61,13 +62,18 @@ class CWInfAttack(nn.Module):
             # print out results
             acc = cal_accuracy(output_c, dummy_labels)
             avg_delta = torch.mean(delta)
-            print('Acc: {}\tDelta: {}'.format(acc, avg_delta))
+            # print('Acc: {}\tDelta: {}'.format(acc, avg_delta))
             if acc > best_acc:
                 best_adv_images = adv_images
                 best_acc = acc
                 best_delta = avg_delta
-        print('Image adv finished: Acc: {}\tDelta: {}'.format(best_acc, best_delta))
-
+            if acc == best_acc and avg_delta < best_delta:
+                best_adv_images = adv_images
+                best_acc = acc
+                best_delta = avg_delta
+        print('Batch finished: Acc: {}\tDelta: {}'.format(best_acc, best_delta))
+        cv2.imshow('adv image', best_adv_images[0])
+        return best_adv_images, best_acc, best_delta
 
     def get_f_value(self, outputs):
         src_p = outputs[:]  # class 1

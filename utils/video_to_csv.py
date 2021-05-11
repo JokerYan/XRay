@@ -32,7 +32,7 @@ def load_from_csv(csv_path, target_class=None):
             video_path = line_parts[0]
             mask_path = line_parts[1] if line_parts[1] else None
             is_fake = np.float32(line_parts[2])
-            if target_class is not None and is_fake == target_class:
+            if target_class is None or is_fake == target_class:
                 out_list.append([video_path, mask_path, is_fake])
     return out_list
 

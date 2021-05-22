@@ -171,19 +171,19 @@ def main():
     train_dataset = XRayDataset(
         './data/train_image_selected.csv',
         transforms.Compose([
-         custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),
-         custom_transforms.RandomCrop(config.MODEL.IMAGE_SIZE[0]),
-         # custom_transforms.PiecewiseAffine(),
-         custom_transforms.Affine(),
-         custom_transforms.LinearContrast(),
-         # custom_transforms.HueAndSaturation(),
-         custom_transforms.ImageToOne(),
-         custom_transforms.MaskToXray(),
-         custom_transforms.ToTensor(),
-         custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                     std=[0.229, 0.224, 0.225])
-        ]),
-        custom_transforms.Grayscale(enabled=config.GRAYSCALE),
+            custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),
+            custom_transforms.RandomCrop(config.MODEL.IMAGE_SIZE[0]),
+            # custom_transforms.PiecewiseAffine(),
+            custom_transforms.Affine(),
+            custom_transforms.LinearContrast(),
+            # custom_transforms.HueAndSaturation(),
+            custom_transforms.ImageToOne(),
+            custom_transforms.MaskToXray(),
+            custom_transforms.ToTensor(),
+            custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225]),
+            custom_transforms.Grayscale(enabled=config.GRAYSCALE),
+        ])
     )
 
     # train_dataset = datasets.ImageFolder(

@@ -176,3 +176,18 @@ class Normalize(object):
             'mask_frame': sample['mask_frame'],
             'is_fake': sample['is_fake']
         }
+
+
+class Grayscale(object):
+    def __init__(self, enabled=False):
+        self.grayscale = torch_transforms.Grayscale()
+
+    def __call__(self, sample):
+        if enabled:
+            return {
+                'video_frame': self.grayscale(sample['video_frame']),
+                'mask_frame': sample['mask_frame'],
+                'is_fake': sample['is_fake']
+            }
+        else:
+            return sample

@@ -180,9 +180,9 @@ def main():
             custom_transforms.ImageToOne(),
             custom_transforms.MaskToXray(),
             custom_transforms.ToTensor(),
+            custom_transforms.Grayscale(enabled=config.GRAYSCALE),
             custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225]),
-            custom_transforms.Grayscale(enabled=config.GRAYSCALE),
         ])
     )
 
@@ -225,9 +225,9 @@ def main():
              custom_transforms.ImageToOne(),
              custom_transforms.MaskToXray(),
              custom_transforms.ToTensor(),
+             custom_transforms.Grayscale(enabled=config.GRAYSCALE),
              custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225]),
-             custom_transforms.Grayscale(enabled=config.GRAYSCALE),
          ]))
 
     valid_loader = torch.utils.data.DataLoader(

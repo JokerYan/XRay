@@ -186,7 +186,7 @@ class Grayscale(object):
     def __call__(self, sample):
         if self.enabled:
             gray_image = self.grayscale(sample['video_frame'])
-            expanded = gray_image.expand(3, grayscale.size[1], grayscale.size[2])
+            expanded = gray_image.expand(3, gray_image.size[1], gray_image.size[2])
             return {
                 'video_frame': expanded,
                 'mask_frame': sample['mask_frame'],

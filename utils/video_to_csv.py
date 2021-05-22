@@ -27,8 +27,8 @@ def write_to_csv(csv_path, video_paths):
 def load_from_csv(csv_path, target_class=None):
     out_list = []
     with open(csv_path, "r") as csv_file:
-        print(line)
         for line in csv_file:
+            print(line)
             line_parts = line.strip().split(",")
             video_path = line_parts[0]
             mask_path = line_parts[1] if line_parts[1] else None

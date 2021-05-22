@@ -106,7 +106,7 @@ def main():
     logger.info(get_model_summary(model, dump_input))
 
     # added hrnet model pretrained loading
-    if config.TEST.MODEL_FILE:
+    if config.TEST.MODEL_FILE and not config.GRAYSCALE:
         logger.info('=> loading model from {}'.format(config.TEST.MODEL_FILE))
         # model.load_state_dict(torch.load(config.TEST.MODEL_FILE))
         model.load_hrnet_pretrained(torch.load(config.TEST.MODEL_FILE))
@@ -180,10 +180,10 @@ def main():
          custom_transforms.ImageToOne(),
          custom_transforms.MaskToXray(),
          custom_transforms.ToTensor(),
-         custom_transforms.Grayscale(enabled=config.GRAYSCALE == 1),
          custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
-        ])
+        ]),
+        custom_transforms.Grayscale(enabled=config.GRAYSCALE),
     )
 
     # train_dataset = datasets.ImageFolder(
@@ -225,9 +225,9 @@ def main():
              custom_transforms.ImageToOne(),
              custom_transforms.MaskToXray(),
              custom_transforms.ToTensor(),
-             custom_transforms.Grayscale(enabled=config.GRAYSCALE == 1),
              custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                         std=[0.229, 0.224, 0.225])
+                                         std=[0.229, 0.224, 0.225]),
+             custom_transforms.Grayscale(enabled=config.GRAYSCALE),
          ]))
 
     valid_loader = torch.utils.data.DataLoader(

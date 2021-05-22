@@ -106,7 +106,7 @@ def main():
     logger.info(get_model_summary(model, dump_input))
 
     # added hrnet model pretrained loading
-    if config.TEST.MODEL_FILE and not config.GRAYSCALE:
+    if config.TEST.MODEL_FILE:
         logger.info('=> loading model from {}'.format(config.TEST.MODEL_FILE))
         # model.load_state_dict(torch.load(config.TEST.MODEL_FILE))
         model.load_hrnet_pretrained(torch.load(config.TEST.MODEL_FILE))

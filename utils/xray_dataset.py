@@ -15,7 +15,7 @@ class XRayDataset(Dataset):
         self.video_mask_list = load_from_csv(csv_path, target_class)
 
         self.length = len(self.video_mask_list)
-        print("{} samples loaded...".format(self.length))
+        print("{} samples loaded from {}...".format(self.length, csv_path))
 
     def __len__(self):
         return self.length

@@ -11,7 +11,7 @@ bucket_frame_count = 5000
 
 class XRayDataset(Dataset):
     def __init__(self, csv_path, transform, target_class=None):
-        self.tranform = transform
+        self.transform = transform
         self.video_mask_list = load_from_csv(csv_path, target_class)
 
 
@@ -32,6 +32,6 @@ class XRayDataset(Dataset):
             mask_frame = np.float32(get_blank_mask_from_size(video_frame.shape))
         mask_frame = cv2.cvtColor(mask_frame, cv2.COLOR_BGR2GRAY)
         item = {"video_frame": video_frame, "mask_frame": mask_frame, "is_fake": is_fake}
-        if self.tranform:
-            item = self.tranform(item)
+        if self.transform:
+            item = self.transform(item)
         return item

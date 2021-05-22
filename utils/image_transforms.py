@@ -181,9 +181,10 @@ class Normalize(object):
 class Grayscale(object):
     def __init__(self, enabled=False):
         self.grayscale = torch_transforms.Grayscale()
+        self.enabled = enabled
 
     def __call__(self, sample):
-        if enabled:
+        if self.enabled:
             return {
                 'video_frame': self.grayscale(sample['video_frame']),
                 'mask_frame': sample['mask_frame'],

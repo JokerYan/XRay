@@ -80,12 +80,13 @@ def get_blank_mask_from_size(size):
     return mask_frame
 
 
-def get_impulse_from_size(size, c, x, y, value=255, reference=0):
-    assert c < size[0]
-    assert x < size[1]
-    assert y < size[2]
+def get_impulse_from_size(size, x, y, c, value=255, reference=0):
+    # numpy H x W x C
+    assert x < size[0]
+    assert y < size[1]
+    assert c < size[2]
     impulse = np.ones(size, dtype=np.float) * reference
-    impulse[c][x][y] = value
+    impulse[x][y][c] = value
     return impulse
 
 
@@ -135,8 +136,8 @@ def generate_impulse_image_and_csv(image_dir, csv_path):
             for y in range(size):
                 for c in range(channel):
                     filename = r'x{}_y{}_c{}.jpg'.format(x, y, c)
-                    img_size = [channel, size, size]
-                    impulse_image = get_impulse_from_size(img_size, c, x, y, impulse_value, impulse_reference)
+                    img_size = [size, size, channel]  # numpy H x W x C
+                    impulse_image = get_impulse_from_size(img_size, x, y, c, impulse_value, impulse_reference)
                     path = save_image_to_disk(impulse_image, image_dir, filename)
                     path_list.append(path)
 

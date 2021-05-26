@@ -80,6 +80,15 @@ def get_blank_mask_from_size(size):
     return mask_frame
 
 
+def get_impulse_from_size(size, c, x, y, value=255, reference=0):
+    assert c < size[0]
+    assert x < size[1]
+    assert y < size[2]
+    impulse = np.ones(size, dtype=np.float) * reference
+    impulse[c][x][y] = value
+    return impulse
+
+
 def show_image(image, title=""):
     target_width = 400
     target_height = int(target_width * image.shape[0] / image.shape[1])
@@ -103,6 +112,37 @@ def show_normalized_images(video_frame, mask_frame, title):
     # mask_frame = mask_frame * 255
     mask_frame = np.tile(mask_frame, [3])
     show_image(np.vstack((video_frame, mask_frame)), title)
+
+
+def save_image_to_disk(image, dir, filename):
+    os.makedirs(dir, exist_ok=True)
+    path = os.path.join(dir, filename)
+    cv2.imwrite(path, image)
+    return path
+
+
+def generate_impulse_image_and_csv(image_dir, csv_path):
+    size = 256
+    channel = 3
+
+    impulse_cap = 255
+    impulse_interval = 32
+    impulse_reference = 0
+
+    path_list = []
+    for impulse_value in range(0, impulse_cap, impulse_interval):
+        for x in range(size):
+            for y in range(size):
+                for c in range(channel):
+                    filename = r'x{}_y{}_c{}.jpg'.format(x, y, c)
+                    img_size = [channel, size, size]
+                    impulse_image = get_impulse_from_size(img_size, c, x, y, impulse_value, impulse_reference)
+                    path = save_image_to_disk(impulse_image, image_dir, filename)
+                    path_list.append(path)
+
+    csv_lines = [path + ',,0' for path in path_list]  # img_path, no mask, not fake
+    with open(csv_path, 'w+') as csv_file:
+        csv_file.write('\n'.join(csv_lines))
 
 
 def main():

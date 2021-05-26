@@ -8,6 +8,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import os
 import time
 import logging
 
@@ -16,7 +17,7 @@ import torch
 from lib.core.evaluate import cal_accuracy
 from lib.utils.utils import save_checkpoint
 
-from utils.image_preprocessing import show_normalized_images
+from utils.image_preprocessing import show_normalized_images, save_image_to_disk
 
 
 logger = logging.getLogger(__name__)
@@ -105,7 +106,7 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
 
 
 def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_log_dir,
-             writer_dict=None, show_image=False):
+             writer_dict=None, show_image=False, save_image=False):
     batch_time = AverageMeter()
     losses = AverageMeter()
     accuracy = AverageMeter()
@@ -127,6 +128,13 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
                 title = str(target_c[0].cpu().clone().detach().numpy()) + "   " + \
                         str(output_c[0].cpu().clone().detach().numpy())
                 show_normalized_images(input[0], output_x[0], title)
+            if save_image:
+                output_image_dir = os.path.join(output_dir, 'output_images')
+                for k in range(input.size[0]):
+                    output_image = output_x[k]
+                    output_idx = i * input.size[0] + k
+                    output_image_name = str(output_idx) + '.jpg'
+                    save_image_to_disk(output_image, output_image_dir, output_image_name)
 
             target_x = target_x.cuda(non_blocking=True)
             target_c = target_c.cuda(non_blocking=True)

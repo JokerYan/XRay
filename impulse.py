@@ -125,7 +125,7 @@ def main():
 
     # Data loading code
 
-    impulse_image_dir = '~/zhiwen/XRay/Data/ImpulseImages/'
+    impulse_image_dir = os.path.expanduser('~/zhiwen/XRay/Data/ImpulseImages/')
     impulse_csv_path = './data/impulse.csv'
     if not os.path.isfile(impulse_csv_path):
         generate_impulse_image_and_csv(impulse_image_dir, impulse_csv_path)

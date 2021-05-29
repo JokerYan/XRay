@@ -130,9 +130,9 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
                 show_normalized_images(input[0], output_x[0], title)
             if save_image:
                 output_image_dir = os.path.join(output_dir, 'output_images')
-                for k in range(input.size[0]):
+                for k in range(input.size()[0]):
                     output_image = output_x[k]
-                    output_idx = i * input.size[0] + k
+                    output_idx = i * input.size()[0] + k
                     output_image_name = str(output_idx) + '.jpg'
                     save_image_to_disk(output_image, output_image_dir, output_image_name)
 

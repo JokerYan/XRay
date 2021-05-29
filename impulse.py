@@ -124,7 +124,6 @@ def main():
     criterion2 = torch.nn.BCELoss().cuda()
 
     # Data loading code
-
     impulse_image_dir = os.path.expanduser('~/zhiwen/XRay/Data/ImpulseImages/')
     impulse_csv_path = './data/impulse.csv'
     if not os.path.isfile(impulse_csv_path):

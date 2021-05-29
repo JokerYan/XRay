@@ -4,6 +4,8 @@ import cv2
 import random
 import numpy as np
 from glob import glob
+
+import torch
 from tqdm import tqdm
 import torchvision.transforms as transforms
 
@@ -118,7 +120,8 @@ def show_normalized_images(video_frame, mask_frame, title):
 def save_image_to_disk(image, dir, filename):
     os.makedirs(dir, exist_ok=True)
     path = os.path.join(dir, filename)
-    print(image)
+    if isinstance(image, torch.Tensor):
+        image = image.detach().cpu().numpy()
     cv2.imwrite(path, image)
     assert os.path.isfile(path)
     return path

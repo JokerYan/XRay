@@ -90,7 +90,7 @@ def get_impulse_from_size(size, x, y, c, step=1, value=255, reference=0):
     impulse = np.ones(size, dtype=np.float) * reference
     for i in range(step):
         for j in range(step):
-            if x + step < size[0] and y + step < size[1]:
+            if x + i < size[0] and y + j < size[1]:
                 impulse[x + i][y + j][c] = value
     return impulse
 

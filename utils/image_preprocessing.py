@@ -91,7 +91,9 @@ def get_impulse_from_size(size, x, y, c, step=1, value=255, reference=0):
     for i in range(step):
         for j in range(step):
             if x + i < size[0] and y + j < size[1]:
-                impulse[x + i][y + j][c] = value
+                # TODO: all channel test
+                for c in range(size[2]):
+                    impulse[x + i][y + j][c] = value
     return impulse
 
 
@@ -135,7 +137,7 @@ def save_image_to_disk(image, dir, filename):
 def generate_impulse_image_and_csv(image_dir, csv_path):
     size = 256
     channel = 3
-    step = 4
+    step = 16
 
     impulse_cap = 255
     impulse_interval = 64

@@ -122,6 +122,7 @@ def save_image_to_disk(image, dir, filename):
     path = os.path.join(dir, filename)
     if isinstance(image, torch.Tensor):
         image = image.detach().cpu().numpy()
+        image = image.transpose((1, 2, 0))
     cv2.imwrite(path, image)
     assert os.path.isfile(path)
     return path

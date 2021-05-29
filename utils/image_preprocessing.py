@@ -118,6 +118,7 @@ def show_normalized_images(video_frame, mask_frame, title):
 def save_image_to_disk(image, dir, filename):
     os.makedirs(dir, exist_ok=True)
     path = os.path.join(dir, filename)
+    print(image)
     cv2.imwrite(path, image)
     assert os.path.isfile(path)
     return path

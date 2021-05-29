@@ -82,13 +82,16 @@ def get_blank_mask_from_size(size):
     return mask_frame
 
 
-def get_impulse_from_size(size, x, y, c, value=255, reference=0):
+def get_impulse_from_size(size, x, y, c, step=1, value=255, reference=0):
     # numpy H x W x C
     assert x < size[0]
     assert y < size[1]
     assert c < size[2]
     impulse = np.ones(size, dtype=np.float) * reference
-    impulse[x][y][c] = value
+    for i in range(step):
+        for j in range(step):
+            if x + step < size[0] and y + step < size[1]:
+                impulse[x + step][y + step][c] = value
     return impulse
 
 
@@ -131,6 +134,7 @@ def save_image_to_disk(image, dir, filename):
 def generate_impulse_image_and_csv(image_dir, csv_path):
     size = 256
     channel = 3
+    step = 3
 
     impulse_cap = 255
     impulse_interval = 32
@@ -138,10 +142,10 @@ def generate_impulse_image_and_csv(image_dir, csv_path):
 
     path_list = []
     for impulse_value in range(0, impulse_cap, impulse_interval):
-        for x in range(size):
-            for y in range(size):
+        for x in range(0, size, step):
+            for y in range(0, size, step):
                 for c in range(channel):
-                    filename = r'x{}_y{}_c{}_v{}.jpg'.format(x, y, c, impulse_value)
+                    filename = r'x{}_y{}_c{}_v{}.jpg'.format(x, y, c, step, impulse_value)
                     img_size = [size, size, channel]  # numpy H x W x C
                     impulse_image = get_impulse_from_size(img_size, x, y, c, impulse_value, impulse_reference)
                     path = save_image_to_disk(impulse_image, image_dir, filename)

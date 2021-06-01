@@ -202,7 +202,7 @@ class StrengthenImpulse(object):
 
     def __call__(self, sample):
         frame_image = sample['video_frame']
-        print(torch.max(frame_image))
+        print(np.max(frame_image))
         frame_image = frame_image * self.multiplier
         return {
             'video_frame': frame_image,

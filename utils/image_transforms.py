@@ -203,7 +203,6 @@ class StrengthenImpulse(object):
     def __call__(self, sample):
         frame_image = sample['video_frame']
         min_value = np.min(frame_image)
-        print(min_value)
         frame_image[frame_image > min_value] *= self.multiplier
         return {
             'video_frame': frame_image,

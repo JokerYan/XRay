@@ -194,3 +194,17 @@ class Grayscale(object):
             }
         else:
             return sample
+
+
+class StrengthenImpulse(object):
+    def __init__(self, multiplier):
+        self.multiplier = multiplier
+
+    def __call__(self, sample):
+        frame_image = sample['video_frame']
+        frame_image = frame_image * self.multiplier
+        return {
+            'video_frame': frame_image,
+            'mask_frame': sample['mask_frame'],
+            'is_fake': sample['is_fake']
+        }

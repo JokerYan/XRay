@@ -141,7 +141,7 @@ def generate_impulse_image_and_csv(image_dir, csv_path):
 
     impulse_cap = 256
     impulse_interval = 64
-    impulse_reference = 64
+    impulse_reference = 128
 
     path_list = []
     for x in range(128, 132, step):
@@ -149,7 +149,8 @@ def generate_impulse_image_and_csv(image_dir, csv_path):
     # for x in range(0, size, step):
     #     for y in range(0, size, step):
             for c in range(channel):
-                for impulse_value in range(0, impulse_cap, impulse_interval):
+                for v in range(0, impulse_cap, impulse_interval):
+                    impulse_value = v + impulse_interval
                     filename = r'x{}_y{}_c{}_v{}.jpg'.format(x, y, c, impulse_value)
                     img_size = [size, size, channel]  # numpy H x W x C
                     impulse_image = get_impulse_from_size(img_size, x, y, c, step, impulse_value, impulse_reference)

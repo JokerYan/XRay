@@ -141,7 +141,7 @@ def generate_impulse_image_and_csv(image_dir, csv_path):
 
     impulse_cap = 256
     impulse_interval = 64
-    impulse_reference = 128
+    impulse_reference = 0
 
     path_list = []
     for x in range(128, 132, step):

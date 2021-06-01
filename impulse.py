@@ -133,7 +133,7 @@ def main():
         transforms.Compose([
             # TODO: Change Random Crop to Centre Crop
             custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0])),
-            custom_transforms.StrengthenImpulse(multiplier=1000),
+            custom_transforms.StrengthenImpulse(multiplier=500),
             custom_transforms.ImageToOne(),
             custom_transforms.MaskToXray(),
             custom_transforms.ToTensor(),

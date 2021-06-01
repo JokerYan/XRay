@@ -124,7 +124,7 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             # compute output
             output_x, output_c = model(input)
 
-            print(torch.max(input.detach().cpu()), torch.max(output_x.detach().cpu()))
+            print(torch.max(input.detach().cpu(), dim=1), torch.max(output_x.detach().cpu(), dim=1))
 
             if show_image:
                 title = str(target_c[0].cpu().clone().detach().numpy()) + "   " + \

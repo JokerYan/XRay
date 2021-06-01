@@ -137,9 +137,9 @@ def save_image_to_disk(image, dir, filename):
 def generate_impulse_image_and_csv(image_dir, csv_path):
     size = 256
     channel = 3
-    step = 4
+    step = 1
 
-    impulse_cap = 255
+    impulse_cap = 256
     impulse_interval = 64
     impulse_reference = 0
 

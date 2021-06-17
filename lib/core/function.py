@@ -210,8 +210,8 @@ def distill(config, train_loader, model_teacher, model_student, criterion1, crit
         target_x = target_x.cuda(non_blocking=True)
         target_c = target_c.cuda(non_blocking=True)
 
-        loss1 = criterion1(output_x, target_x)
-        loss2 = criterion2(output_c, target_c)
+        loss1 = criterion1(output_x, target_x.detach())
+        loss2 = criterion2(output_c, target_c.detach())
         loss = loss1 * 100 + loss2
 
         # compute gradient and do update step

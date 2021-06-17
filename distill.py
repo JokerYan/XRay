@@ -145,8 +145,11 @@ def main():
                                         'checkpoint.pth.tar')
         if os.path.isfile(model_state_file):
             checkpoint = torch.load(model_state_file)
+            last_epoch = checkpoint['epoch']
+            best_perf = checkpoint['perf']
             model_student.module.load_state_dict(checkpoint['state_dict'])
-            logger.info("=> loaded teacher checkpoint (epoch {})"
+            optimizer.load_state_dict(checkpoint['optimizer'])
+            logger.info("=> loaded checkpoint (epoch {})"
                         .format(checkpoint['epoch']))
 
     # load teacher model
@@ -156,10 +159,7 @@ def main():
                                         'checkpoint.pth.tar')
         if os.path.isfile(model_state_file):
             checkpoint = torch.load(model_state_file)
-            last_epoch = checkpoint['epoch']
-            best_perf = checkpoint['perf']
             model_teacher.module.load_state_dict(checkpoint['state_dict'])
-            optimizer.load_state_dict(checkpoint['optimizer'])
             logger.info("=> loaded checkpoint (epoch {})"
                         .format(checkpoint['epoch']))
 

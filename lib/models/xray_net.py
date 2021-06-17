@@ -5,6 +5,15 @@ from torch.nn.functional import interpolate, sigmoid
 
 from lib.models.cls_hrnet import get_cls_net, BN_MOMENTUM
 
+
+class TempSigmoid(nn.Sigmoid):
+    def __init__(self, T=1):
+        super().__init__()
+        self.T = T
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        return super().forward(input / self.T)
+
+
 class XRayNet(nn.Module):
     def __init__(self, cfg, **kwargs):
         super(XRayNet, self).__init__()
@@ -47,7 +56,8 @@ class XRayNet(nn.Module):
         self.classification_head = nn.Sequential(
             nn.AvgPool2d(self.cfg.MODEL.IMAGE_SIZE[0]),
             nn.Linear(1, 1),
-            nn.Sigmoid()
+            # nn.Sigmoid(),
+            TempSigmoid(self.cfg["MODEL"]["TEMPERATURE"])
         )
 
     def forward(self, x):

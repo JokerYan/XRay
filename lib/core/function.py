@@ -41,7 +41,7 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
 
     end = time.time()
     for i, data in enumerate(train_loader):
-        input = data['video_frame']
+        model_input = data['video_frame']
         target_x = data['mask_frame']
         target_c = data['is_fake']
 
@@ -50,7 +50,7 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
         #target = target - 1 # Specific for imagenet
 
         # compute output
-        output_x, output_c = model(input)
+        output_x, output_c = model(model_input)
 
         target_x = target_x.cuda(non_blocking=True)
         target_c = target_c.cuda(non_blocking=True)
@@ -65,7 +65,7 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
         optimizer.step()
 
         # measure accuracy and record loss
-        losses.update(loss.item(), input.size(0))
+        losses.update(loss.item(), model_input.size(0))
 
         # evaluation
         acc = cal_accuracy(output_c, target_c)
@@ -83,7 +83,7 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
                   'Loss {loss.val:.5f} ({loss.avg:.5f})\t' \
                   'Accuracy {accuracy.val:.3f} ({accuracy.avg:.3f})\t'.format(
                       epoch, i, len(train_loader), batch_time=batch_time,
-                      speed=input.size(0)/batch_time.val,
+                      speed=model_input.size(0)/batch_time.val,
                       data_time=data_time, loss=losses, accuracy=accuracy)
             logger.info(msg)
 
@@ -117,24 +117,24 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
     with torch.no_grad():
         end = time.time()
         for i, data in enumerate(val_loader):
-            input = data['video_frame']
+            model_input = data['video_frame']
             target_x = data['mask_frame']
             target_c = data['is_fake']
 
             # compute output
-            output_x, output_c = model(input)
+            output_x, output_c = model(model_input)
 
-            print(torch.amax(input.detach().cpu(), dim=(1, 2, 3)), torch.amax(output_x.detach().cpu(), dim=(1, 2, 3)))
+            print(torch.amax(model_input.detach().cpu(), dim=(1, 2, 3)), torch.amax(output_x.detach().cpu(), dim=(1, 2, 3)))
 
             if show_image:
                 title = str(target_c[0].cpu().clone().detach().numpy()) + "   " + \
                         str(output_c[0].cpu().clone().detach().numpy())
-                show_normalized_images(input[0], output_x[0], title)
+                show_normalized_images(model_input[0], output_x[0], title)
             if save_image:
                 output_image_dir = os.path.join(output_dir, 'output_images')
-                for k in range(input.size()[0]):
+                for k in range(model_input.size()[0]):
                     output_image = output_x[k]
-                    output_idx = i * input.size()[0] + k
+                    output_idx = i * model_input.size()[0] + k
                     output_image_name = str(output_idx) + '.jpg'
                     save_image_to_disk(output_image, output_image_dir, output_image_name)
 
@@ -146,7 +146,7 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             loss = loss1 * 100 + loss2
 
             # measure accuracy and record loss
-            losses.update(loss.item(), input.size(0))
+            losses.update(loss.item(), model_input.size(0))
 
             # TODO: Add New Evaluation
             # prec1, prec5 = accuracy(output, target, (1, 5))
@@ -174,6 +174,90 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             writer_dict['valid_global_steps'] = global_steps + 1
 
     return accuracy.avg
+
+
+def distill(config, train_loader, model_teacher, model_student, criterion1, criterion2, optimizer, epoch,
+          output_dir, tb_log_dir, writer_dict):
+    batch_time = AverageMeter()
+    data_time = AverageMeter()
+    losses = AverageMeter()
+    accuracy = AverageMeter()
+
+    # freeze / unfreeze hrnet
+    if epoch == 0:
+        model_student.module.freeze_hrnet()
+    elif epoch == 3:
+        model_student.module.unfreeze_hrnet()
+
+    # switch to train mode
+    model_teacher.eval()
+    model_student.train()
+
+    end = time.time()
+    for i, data in enumerate(train_loader):
+        model_input = data['video_frame']
+        # target_x = data['mask_frame']
+        # target_c = data['is_fake']
+
+        # measure data loading time
+        data_time.update(time.time() - end)
+        #target = target - 1 # Specific for imagenet
+
+        # compute output
+        target_x, target_c = model_teacher(model_input)
+        output_x, output_c = model_student(model_input)
+
+        target_x = target_x.cuda(non_blocking=True)
+        target_c = target_c.cuda(non_blocking=True)
+
+        loss1 = criterion1(output_x, target_x)
+        loss2 = criterion2(output_c, target_c)
+        loss = loss1 * 100 + loss2
+
+        # compute gradient and do update step
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        # measure accuracy and record loss
+        losses.update(loss.item(), model_input.size(0))
+
+        # evaluation
+        acc = cal_accuracy(output_c, target_c)
+        accuracy.update(acc)
+
+        # measure elapsed time
+        batch_time.update(time.time() - end)
+        end = time.time()
+
+        if i % config.PRINT_FREQ == 0:
+            msg = 'Epoch: [{0}][{1}/{2}]\t' \
+                  'Time {batch_time.val:.3f}s ({batch_time.avg:.3f}s)\t' \
+                  'Speed {speed:.1f} samples/s\t' \
+                  'Data {data_time.val:.3f}s ({data_time.avg:.3f}s)\t' \
+                  'Loss {loss.val:.5f} ({loss.avg:.5f})\t' \
+                  'Accuracy {accuracy.val:.3f} ({accuracy.avg:.3f})\t'.format(
+                      epoch, i, len(train_loader), batch_time=batch_time,
+                      speed=model_input.size(0)/batch_time.val,
+                      data_time=data_time, loss=losses, accuracy=accuracy)
+            logger.info(msg)
+
+            if writer_dict:
+                writer = writer_dict['writer']
+                global_steps = writer_dict['train_global_steps']
+                writer.add_scalar('train_loss', losses.val, global_steps)
+                writer.add_scalar('accuracy', accuracy.val, global_steps)
+                writer_dict['train_global_steps'] = global_steps + 1
+
+        if (i + 1) % config.SAVE_FREQ == 0:
+            logger.info('=> saving checkpoint to {}'.format(output_dir))
+            save_checkpoint({
+                'epoch': epoch,
+                'model': config.MODEL.NAME,
+                'state_dict': model_student.module.state_dict(),
+                'perf': 0,
+                'optimizer': optimizer.state_dict(),
+            }, False, output_dir, filename='mini_checkpoint.pth.tar')
 
 
 class AverageMeter(object):

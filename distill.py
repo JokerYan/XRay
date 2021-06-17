@@ -1,0 +1,290 @@
+# ------------------------------------------------------------------------------
+# Copyright (c) Microsoft
+# Licensed under the MIT License.
+# Written by Bin Xiao (Bin.Xiao@microsoft.com)
+# Modified by Ke Sun (sunk@mail.ustc.edu.cn)
+# ------------------------------------------------------------------------------
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+import argparse
+import os
+import pprint
+import shutil
+import sys
+
+import torch
+import torch.nn.parallel
+import torch.backends.cudnn as cudnn
+import torch.optim
+import torch.utils.data
+import torch.utils.data.distributed
+import torchvision.datasets as datasets
+import torchvision.transforms as transforms
+from tensorboardX import SummaryWriter
+
+# import _init_paths
+# import models
+# from config import config
+# from config import update_config
+# from core.function import train
+# from core.function import validate
+# from utils.modelsummary import get_model_summary
+# from utils.utils import get_optimizer
+# from utils.utils import save_checkpoint
+# from utils.utils import create_logger
+
+import lib.models.cls_hrnet as cls_hrnet
+from lib.models.xray_net import XRayNet
+import utils.image_transforms as custom_transforms
+from utils.xray_dataset import XRayDataset
+
+from lib.config import config
+from lib.config import update_config
+from lib.core.function import validate, train, distill
+from lib.utils.modelsummary import get_model_summary
+from lib.utils.utils import get_optimizer, save_checkpoint, create_logger
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='Train classification network')
+    
+    parser.add_argument('--cfg',
+                        help='experiment configure file name',
+                        required=True,
+                        type=str)
+
+    parser.add_argument('--modelDir',
+                        help='model directory',
+                        type=str,
+                        default='')
+    parser.add_argument('--logDir',
+                        help='log directory',
+                        type=str,
+                        default='')
+    parser.add_argument('--dataDir',
+                        help='data directory',
+                        type=str,
+                        default='')
+    parser.add_argument('--testModel',
+                        help='testModel',
+                        type=str,
+                        default='')
+
+    args = parser.parse_args()
+    update_config(config, args)
+
+    return args, config
+
+def construct_model():
+    args, config = parse_args()
+    model = XRayNet(config)
+    return model, config
+
+def main():
+    args, config = parse_args()
+    logger, final_output_dir, tb_log_dir = create_logger(
+        config, args.cfg, 'train')
+
+    logger.info(pprint.pformat(args))
+    logger.info(pprint.pformat(config))
+
+    # cudnn related setting
+    cudnn.benchmark = config.CUDNN.BENCHMARK
+    torch.backends.cudnn.deterministic = config.CUDNN.DETERMINISTIC
+    torch.backends.cudnn.enabled = config.CUDNN.ENABLED
+
+    # model = eval('models.'+config.MODEL.NAME+'.get_cls_net')(
+    #     config)
+    # model = cls_hrnet.get_cls_net(config)
+    model_teacher = XRayNet(config)
+    model_student = XRayNet(config)
+
+    dump_input = torch.rand(
+        (1, 3, config.MODEL.IMAGE_SIZE[1], config.MODEL.IMAGE_SIZE[0])
+    )
+    logger.info(get_model_summary(model_student, dump_input))
+
+    # added hrnet model pretrained loading
+    if config.TEST.MODEL_FILE:
+        logger.info('=> loading model from {}'.format(config.TEST.MODEL_FILE))
+        # model.load_state_dict(torch.load(config.TEST.MODEL_FILE))
+        model_teacher.load_hrnet_pretrained(torch.load(config.TEST.MODEL_FILE))
+        model_student.load_hrnet_pretrained(torch.load(config.TEST.MODEL_FILE))
+
+    # copy model file
+    this_dir = os.path.dirname(__file__)
+    models_dst_dir = os.path.join(final_output_dir, 'models')
+    if os.path.exists(models_dst_dir):
+        shutil.rmtree(models_dst_dir)
+    shutil.copytree(os.path.join(this_dir, 'lib/models'), models_dst_dir)
+
+    writer_dict = {
+        'writer': SummaryWriter(log_dir=tb_log_dir),
+        'train_global_steps': 0,
+        'valid_global_steps': 0,
+    }
+
+    gpus = list(config.GPUS)
+    model_teacher = torch.nn.DataParallel(model_teacher, device_ids=gpus).cuda()
+    model_student = torch.nn.DataParallel(model_student, device_ids=gpus).cuda()
+
+    # define loss function (criterion) and optimizer
+    # criterion = torch.nn.CrossEntropyLoss().cuda()
+    criterion1 = torch.nn.BCELoss().cuda()
+    criterion2 = torch.nn.BCELoss().cuda()
+
+    optimizer = get_optimizer(config, model_student)
+
+    best_perf = 0.0
+    last_epoch = config.TRAIN.BEGIN_EPOCH
+    # load student model if resume
+    if config.TRAIN.RESUME:
+        model_state_file = os.path.join(final_output_dir,
+                                        'checkpoint.pth.tar')
+        if os.path.isfile(model_state_file):
+            checkpoint = torch.load(model_state_file)
+            last_epoch = checkpoint['epoch']
+            best_perf = checkpoint['perf']
+            model_student.module.load_state_dict(checkpoint['state_dict'])
+            optimizer.load_state_dict(checkpoint['optimizer'])
+            logger.info("=> loaded checkpoint (epoch {})"
+                        .format(checkpoint['epoch']))
+
+    # load teacher model
+    if config.TRAIN.RESUME:
+        teacher_dir = config.TEACHER_DIR
+        model_state_file = os.path.join(teacher_dir,
+                                        'checkpoint.pth.tar')
+        if os.path.isfile(model_state_file):
+            checkpoint = torch.load(model_state_file)
+            last_epoch = checkpoint['epoch']
+            best_perf = checkpoint['perf']
+            model_teacher.module.load_state_dict(checkpoint['state_dict'])
+            optimizer.load_state_dict(checkpoint['optimizer'])
+            logger.info("=> loaded checkpoint (epoch {})"
+                        .format(checkpoint['epoch']))
+
+    if isinstance(config.TRAIN.LR_STEP, list):
+        lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(
+            optimizer, config.TRAIN.LR_STEP, config.TRAIN.LR_FACTOR,
+            last_epoch-1
+        )
+    else:
+        lr_scheduler = torch.optim.lr_scheduler.StepLR(
+            optimizer, config.TRAIN.LR_STEP, config.TRAIN.LR_FACTOR,
+            last_epoch-1
+        )
+
+    # Data loading code
+    # traindir = os.path.join(config.DATASET.ROOT, config.DATASET.TRAIN_SET)
+    # valdir = os.path.join(config.DATASET.ROOT, config.DATASET.TEST_SET)
+    #
+    # normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+    #                                  std=[0.229, 0.224, 0.225])
+
+    train_dataset = XRayDataset(
+        './data/train_image_selected.csv',
+        transforms.Compose([
+            custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),
+            custom_transforms.RandomCrop(config.MODEL.IMAGE_SIZE[0]),
+            # custom_transforms.PiecewiseAffine(),
+            custom_transforms.Affine(),
+            custom_transforms.LinearContrast(),
+            # custom_transforms.HueAndSaturation(),
+            custom_transforms.ImageToOne(),
+            custom_transforms.MaskToXray(),
+            custom_transforms.ToTensor(),
+            custom_transforms.Grayscale(enabled=config.GRAYSCALE),
+            custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225]),
+        ])
+    )
+
+    # train_dataset = datasets.ImageFolder(
+    #     traindir,
+    #     transforms.Compose([
+    #         transforms.RandomResizedCrop(config.MODEL.IMAGE_SIZE[0]),
+    #         transforms.RandomHorizontalFlip(),
+    #         transforms.ToTensor(),
+    #         normalize,
+    #     ])
+    # )
+
+    train_loader = torch.utils.data.DataLoader(
+        train_dataset,
+        batch_size=config.TRAIN.BATCH_SIZE_PER_GPU*len(gpus),
+        shuffle=True,
+        num_workers=config.WORKERS,
+        pin_memory=True
+    )
+
+    # valid_loader = torch.utils.data.DataLoader(
+    #     datasets.ImageFolder(valdir, transforms.Compose([
+    #         transforms.Resize(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),
+    #         transforms.CenterCrop(config.MODEL.IMAGE_SIZE[0]),
+    #         transforms.ToTensor(),
+    #         normalize,
+    #     ])),
+    #     batch_size=config.TEST.BATCH_SIZE_PER_GPU*len(gpus),
+    #     shuffle=False,
+    #     num_workers=config.WORKERS,
+    #     pin_memory=True
+    # )
+
+    valid_dataset = XRayDataset(
+        './data/val_image_selected.csv',
+         transforms.Compose([
+             # TODO: Change Random Crop to Centre Crop
+             custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0])),
+             custom_transforms.ImageToOne(),
+             custom_transforms.MaskToXray(),
+             custom_transforms.ToTensor(),
+             custom_transforms.Grayscale(enabled=config.GRAYSCALE),
+             custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225]),
+         ]))
+
+    valid_loader = torch.utils.data.DataLoader(
+        valid_dataset,
+        batch_size=config.TEST.BATCH_SIZE_PER_GPU*len(gpus),
+        shuffle=False,
+        num_workers=config.WORKERS,
+        pin_memory=True
+    )
+
+    for epoch in range(last_epoch, config.TRAIN.END_EPOCH):
+        # train for one epoch
+        distill(config, train_loader, model_teacher, model_student, criterion1, criterion2, optimizer, epoch,
+              final_output_dir, tb_log_dir, writer_dict)
+        lr_scheduler.step()
+        # evaluate on validation set
+        perf_indicator = validate(config, valid_loader, model_student, criterion1, criterion2,
+                                  final_output_dir, tb_log_dir, writer_dict)
+
+        if perf_indicator > best_perf:
+            best_perf = perf_indicator
+            best_model = True
+        else:
+            best_model = False
+
+        logger.info('=> saving checkpoint to {}'.format(final_output_dir))
+        save_checkpoint({
+            'epoch': epoch + 1,
+            'model': config.MODEL.NAME,
+            'state_dict': model_student.module.state_dict(),
+            'perf': perf_indicator,
+            'optimizer': optimizer.state_dict(),
+        }, best_model, final_output_dir, filename='checkpoint.pth.tar')
+
+    final_model_state_file = os.path.join(final_output_dir,
+                                          'final_state.pth.tar')
+    logger.info('saving final model state to {}'.format(
+        final_model_state_file))
+    torch.save(model_student.module.state_dict(), final_model_state_file)
+    writer_dict['writer'].close()
+
+
+if __name__ == '__main__':
+    main()

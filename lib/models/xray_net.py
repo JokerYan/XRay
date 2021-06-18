@@ -57,8 +57,8 @@ class XRayNet(nn.Module):
         self.classification_head = nn.Sequential(
             nn.AvgPool2d(self.cfg.MODEL.IMAGE_SIZE[0]),
             nn.Linear(1, 1),
-            # nn.Sigmoid(),
-            self.temp_sigmoid,
+            nn.Sigmoid(),
+            # self.temp_sigmoid,
         )
 
     def forward(self, x):
@@ -74,10 +74,11 @@ class XRayNet(nn.Module):
         x = interpolate(x, size=(self.cfg.MODEL.IMAGE_SIZE[0], self.cfg.MODEL.IMAGE_SIZE[0]),
                         mode='bilinear', align_corners=False)
         x = sigmoid(x)
+        x_temp = self.temp_sigmoid(x)
         c = self.classification_head(x)
         c = c.reshape([-1])
 
-        return x, c
+        return x_temp, c
 
     def load_hrnet_pretrained(self, model_file):
         self.hrnet.load_state_dict(model_file)

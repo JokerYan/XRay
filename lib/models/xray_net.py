@@ -20,6 +20,7 @@ class XRayNet(nn.Module):
 
         self.cfg = cfg
         self.hrnet = get_cls_net(cfg)
+        self.sigmoid_T = self.cfg["MODEL"]["TEMPERATURE"]
         self.temp_sigmoid = TempSigmoid(self.cfg["MODEL"]["TEMPERATURE"])
         self._make_head(self.hrnet.last_pre_stage_channels)
 
@@ -73,12 +74,13 @@ class XRayNet(nn.Module):
         x = self.xray_head(x)
         x = interpolate(x, size=(self.cfg.MODEL.IMAGE_SIZE[0], self.cfg.MODEL.IMAGE_SIZE[0]),
                         mode='bilinear', align_corners=False)
+        x_temp = sigmoid(x / self.sigmoid_T)
         x = sigmoid(x)
-        x_temp = self.temp_sigmoid(x)
+        # x_temp = self.temp_sigmoid(x)
         c = self.classification_head(x)
         c = c.reshape([-1])
 
-        return x, c
+        return x_temp, c
 
     def load_hrnet_pretrained(self, model_file):
         self.hrnet.load_state_dict(model_file)

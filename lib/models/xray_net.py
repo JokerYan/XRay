@@ -6,12 +6,13 @@ from torch.nn.functional import interpolate, sigmoid
 from lib.models.cls_hrnet import get_cls_net, BN_MOMENTUM
 
 
-class TempSigmoid(nn.Sigmoid):
+class TempSigmoid(nn.Module):
     def __init__(self, T=1):
         super().__init__()
         self.T = T
+        self.sigmoid = nn.Sigmoid()
     def forward(self, input: torch.Tensor) -> torch.Tensor:
-        return super().forward(input / self.T)
+        return self.sigmoid(input / self.T)
 
 
 class XRayNet(nn.Module):
@@ -21,7 +22,7 @@ class XRayNet(nn.Module):
         self.cfg = cfg
         self.hrnet = get_cls_net(cfg)
         self.sigmoid_T = self.cfg["MODEL"]["TEMPERATURE"]
-        self.temp_sigmoid = TempSigmoid(self.cfg["MODEL"]["TEMPERATURE"])
+        self.temp_sigmoid = TempSigmoid(T=self.cfg["MODEL"]["TEMPERATURE"])
         self._make_head(self.hrnet.last_pre_stage_channels)
 
     # make xray head
@@ -74,9 +75,9 @@ class XRayNet(nn.Module):
         x = self.xray_head(x)
         x = interpolate(x, size=(self.cfg.MODEL.IMAGE_SIZE[0], self.cfg.MODEL.IMAGE_SIZE[0]),
                         mode='bilinear', align_corners=False)
-        x_temp = sigmoid(x / self.sigmoid_T)
+        # x_temp = sigmoid(x / self.sigmoid_T)
+        x_temp = self.temp_sigmoid(x)
         x = sigmoid(x)
-        # x_temp = self.temp_sigmoid(x)
         c = self.classification_head(x)
         c = c.reshape([-1])
 

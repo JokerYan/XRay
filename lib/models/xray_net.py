@@ -78,7 +78,7 @@ class XRayNet(nn.Module):
         c = self.classification_head(x)
         c = c.reshape([-1])
 
-        return x_temp, c
+        return x, c
 
     def load_hrnet_pretrained(self, model_file):
         self.hrnet.load_state_dict(model_file)

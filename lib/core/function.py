@@ -206,10 +206,6 @@ def distill(config, train_loader, model_teacher, model_student, criterion1, crit
         # compute output
         target_x, target_c = model_teacher(model_input)
         output_x, output_c = model_student(model_input)
-        print('teacher:')
-        print(target_c.detach().cpu())
-        print('student:')
-        print(output_c.detach().cpu())
 
         target_x = target_x.cuda(non_blocking=True)
         target_c = target_c.cuda(non_blocking=True)
@@ -217,6 +213,13 @@ def distill(config, train_loader, model_teacher, model_student, criterion1, crit
         loss1 = criterion1(output_x, target_x.detach())
         loss2 = criterion2(output_c, target_c.detach())
         loss = loss1 * 100 + loss2
+
+        print('teacher:')
+        print(target_c.detach().cpu())
+        print('student:')
+        print(output_c.detach().cpu())
+        print('loss 2:')
+        print(loss2)
 
         # compute gradient and do update step
         optimizer.zero_grad()

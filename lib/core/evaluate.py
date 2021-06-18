@@ -33,5 +33,6 @@ def cal_accuracy(output, target):
         ones = torch.ones_like(output)
         zeros = torch.zeros_like(output)
         prediction = torch.where(output > 0.5, ones, zeros)
+        target = torch.where(target > 0.5, ones, zeros)
         # print(prediction, target)
         return 1 - torch.mean(torch.abs(prediction - target))

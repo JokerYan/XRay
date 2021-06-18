@@ -206,6 +206,9 @@ def distill(config, train_loader, model_teacher, model_student, criterion1, crit
         # compute output
         target_x, target_c = model_teacher(model_input)
         output_x, output_c = model_student(model_input)
+        print('teacher:')
+        print(target_c.detach().cpu())
+        print('student:')
         print(output_c.detach().cpu())
 
         target_x = target_x.cuda(non_blocking=True)

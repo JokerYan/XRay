@@ -146,9 +146,9 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             loss = loss1 * 100 + loss2
 
             print('target:')
-            print(target_x.detach().cpu())
+            print(target_c.detach().cpu())
             print('output:')
-            print(output_x.detach().cpu())
+            print(output_c.detach().cpu())
             print('loss 1:')
             print(loss1 * 100)
             print('loss 2:')

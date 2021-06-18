@@ -219,7 +219,7 @@ def distill(config, train_loader, model_teacher, model_student, criterion1, crit
         print('student:')
         print(output_c.detach().cpu())
         print('loss 1:')
-        print(loss1)
+        print(loss1 * 100)
         print('loss 2:')
         print(loss2)
 

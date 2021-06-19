@@ -35,7 +35,7 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
         model.module.freeze_hrnet()
     elif epoch == 3:
         model.module.unfreeze_hrnet()
-    elif epoch == 15:
+    elif epoch == 5:
         model.module.freeze_xray()
 
     # switch to train mode
@@ -63,7 +63,7 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
 
         # compute gradient and do update step
         optimizer.zero_grad()
-        if epoch == 15:
+        if epoch >= 5:
             loss2.backward()
         else:
             loss.backward()

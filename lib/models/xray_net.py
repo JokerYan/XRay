@@ -92,3 +92,9 @@ class XRayNet(nn.Module):
     def unfreeze_hrnet(self):
         self.hrnet.unfreeze_weights()
 
+    # freeze everything but classification head
+    def freeze_xray(self):
+        for param in self.parameters():
+            param.requires_grad = False
+        for param in self.classification_head.parameters():
+            param.requires_grad = True

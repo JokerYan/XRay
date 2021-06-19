@@ -35,6 +35,8 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
         model.module.freeze_hrnet()
     elif epoch == 3:
         model.module.unfreeze_hrnet()
+    elif epoch == 15:
+        model.module.freeze_xray()
 
     # switch to train mode
     model.train()
@@ -61,7 +63,10 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
 
         # compute gradient and do update step
         optimizer.zero_grad()
-        loss.backward()
+        if epoch == 15:
+            loss2.backward()
+        else:
+            loss.backward()
         optimizer.step()
 
         # measure accuracy and record loss
@@ -145,14 +150,14 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             loss2 = criterion2(output_c, target_c)
             loss = loss1 * 100 + loss2
 
-            print('target:')
-            print(target_c.detach().cpu())
-            print('output:')
-            print(output_c.detach().cpu())
-            print('loss 1:')
-            print(loss1 * 100)
-            print('loss 2:')
-            print(loss2)
+            # print('target:')
+            # print(target_c.detach().cpu())
+            # print('output:')
+            # print(output_c.detach().cpu())
+            # print('loss 1:')
+            # print(loss1 * 100)
+            # print('loss 2:')
+            # print(loss2)
 
             # measure accuracy and record loss
             losses.update(loss.item(), model_input.size(0))

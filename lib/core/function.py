@@ -74,8 +74,9 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
         optimizer.step()
 
         for j, param in enumerate(model.parameters()):
-            if j < 10:
+            if j < 1:
                 print(param, param.requires_grad)
+        input()
 
         # measure accuracy and record loss
         losses.update(loss.item(), model_input.size(0))

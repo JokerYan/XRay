@@ -74,7 +74,7 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
         optimizer.step()
 
         for j, param in enumerate(model.parameters()):
-            if j == 100:
+            if param.requires_grad:
                 print(param, param.requires_grad)
         input()
 

@@ -100,6 +100,13 @@ class XRayNet(nn.Module):
         for param in self.classification_head.parameters():
             param.requires_grad = True
             # print(param.name, param.requires_grad)
+        count_true = 0
+        count_false = 0
         for param in self.parameters():
-            print(param.name, param.requires_grad)
+            if param.requires_grad:
+                count_true += 1
+            else:
+                count_false += 1
+            # print(param.name, param.requires_grad)
+        print("true: {}\nfalse: {}".format(count_true, count_false))
         input()

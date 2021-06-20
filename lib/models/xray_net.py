@@ -11,6 +11,7 @@ class TempSigmoid(nn.Module):
         super().__init__()
         self.T = T
         self.sigmoid = nn.Sigmoid()
+
     def forward(self, input: torch.Tensor) -> torch.Tensor:
         return self.sigmoid(input / self.T)
 

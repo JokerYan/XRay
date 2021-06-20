@@ -57,6 +57,8 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
         # compute output
         output_x, output_c = model(model_input)
 
+        print(output_x)
+
         target_x = target_x.cuda(non_blocking=True)
         target_c = target_c.cuda(non_blocking=True)
 
@@ -72,11 +74,6 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
         #     loss.backward()
         loss.backward()
         optimizer.step()
-
-        for name, param in model.named_parameters():
-            if param.requires_grad:
-                print(name)
-        input()
 
         # measure accuracy and record loss
         losses.update(loss.item(), model_input.size(0))

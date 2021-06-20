@@ -30,6 +30,9 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
     losses = AverageMeter()
     accuracy = AverageMeter()
 
+    # switch to train mode
+    model.train()
+
     # freeze / unfreeze hrnet
     if epoch == 0:
         logger.info('freezing hrnet')
@@ -37,12 +40,9 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
     elif epoch == 3:
         logger.info('unfreezing hrnet')
         model.module.unfreeze_hrnet()
-    elif epoch == 5:
+    elif epoch >= 5:
         logger.info('freezing xray')
         model.module.freeze_xray()
-
-    # switch to train mode
-    model.train()
 
     end = time.time()
     for i, data in enumerate(train_loader):

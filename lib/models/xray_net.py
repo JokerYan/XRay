@@ -96,5 +96,5 @@ class XRayNet(nn.Module):
     def freeze_xray(self):
         for param in self.parameters():
             param.requires_grad = False
-        for param in self.classification_head.parameters():
-            param.requires_grad = True
+        # for param in self.classification_head.parameters():
+        #     param.requires_grad = True

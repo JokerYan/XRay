@@ -4,7 +4,7 @@ DATA_DIR: ''
 OUTPUT_DIR: 'output/'
 TEACHER_DIR: 'output/ILSVRC/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux/'
 WORKERS: 4
-PRINT_FREQ: 100
+PRINT_FREQ: 1000
 SAVE_FREQ: 10000
 
 MODEL: 

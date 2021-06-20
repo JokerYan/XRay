@@ -24,6 +24,7 @@ class XRayNet(nn.Module):
         self.sigmoid_T = self.cfg["MODEL"]["TEMPERATURE"]
         self.temp_sigmoid = TempSigmoid(T=self.cfg["MODEL"]["TEMPERATURE"])
         self._make_head(self.hrnet.last_pre_stage_channels)
+        print(self.parameters())
 
     # make xray head
     # adapted from hrnet face landmarks

@@ -73,7 +73,10 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
         loss.backward()
         optimizer.step()
 
-        print(loss1, loss2, loss)
+        for name, param in model.named_parameters():
+            if param.requires_gra:
+                print(name)
+        input()
 
         # measure accuracy and record loss
         losses.update(loss.item(), model_input.size(0))

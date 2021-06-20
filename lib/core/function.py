@@ -74,7 +74,7 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
         optimizer.step()
 
         for name, param in model.named_parameters():
-            if param.requires_gra:
+            if param.requires_grad:
                 print(name)
         input()
 

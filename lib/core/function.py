@@ -57,11 +57,6 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
         # compute output
         output_x, output_c = model(model_input)
 
-        print('output')
-        print(output_x[0][0])
-        print('target')
-        print(target_x[0][0])
-
         target_x = target_x.cuda(non_blocking=True)
         target_c = target_c.cuda(non_blocking=True)
 

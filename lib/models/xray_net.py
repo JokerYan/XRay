@@ -77,12 +77,12 @@ class XRayNet(nn.Module):
         x = interpolate(x, size=(self.cfg.MODEL.IMAGE_SIZE[0], self.cfg.MODEL.IMAGE_SIZE[0]),
                         mode='bilinear', align_corners=False)
         # x_temp = sigmoid(x / self.sigmoid_T)
-        x_temp = self.temp_sigmoid(x)
+        # x_temp = self.temp_sigmoid(x)
         x = sigmoid(x)
         c = self.classification_head(x)
         c = c.reshape([-1])
 
-        return x_temp, c
+        return x, c
 
     def load_hrnet_pretrained(self, model_file):
         self.hrnet.load_state_dict(model_file)

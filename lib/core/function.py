@@ -50,11 +50,11 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
         model_input = data['video_frame']
         target_x = data['mask_frame']
         target_c = data['is_fake']
-        if debug_input is None:
-            debug_input = model_input
-        model_output_x, model_output_c = model(debug_input)
-        print(model_output_x[0][0])
-        input()
+        # if debug_input is None:
+        #     debug_input = model_input
+        # model_output_x, model_output_c = model(debug_input)
+        # print(model_output_x[0][0])
+        # input()
 
         # measure data loading time
         data_time.update(time.time() - end)

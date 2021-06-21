@@ -84,7 +84,7 @@ TRAIN:
   - 7
   - 8
   - 9
-  OPTIMIZER: adam
+  OPTIMIZER: sgd
   LR: 0.0002
   WD: 0.0001
   MOMENTUM: 0.9

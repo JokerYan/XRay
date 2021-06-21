@@ -101,6 +101,6 @@ class XRayNet(nn.Module):
         for param in self.classification_head.parameters():
             param.requires_grad = True
             # print(param.name, param.requires_grad)
-        for param in self.hrnet.parameters():
+        for param in self.xray_head.parameters():
             print(param.requires_grad)
             break

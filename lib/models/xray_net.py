@@ -102,5 +102,8 @@ class XRayNet(nn.Module):
             param.requires_grad = True
             # print(param.name, param.requires_grad)
         for param in self.xray_head.parameters():
-            print(param.requires_grad)
-            break
+            if param.requires_grad:
+                print("=== PARAM REQUIRES GRAD ===")
+        for param in self.hrnet.parameters():
+            if param.requires_grad:
+                print("=== PARAM REQUIRES GRAD ===")

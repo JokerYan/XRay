@@ -72,11 +72,11 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
 
         # compute gradient and do update step
         optimizer.zero_grad()
-        # if epoch >= 5:
-        #     loss2.backward()
-        # else:
-        #     loss.backward()
-        loss.backward()
+        if epoch >= 5:
+            loss2.backward()
+        else:
+            loss.backward()
+        # loss.backward()
         optimizer.step()
 
         # measure accuracy and record loss

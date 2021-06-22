@@ -24,7 +24,7 @@ class XRayNet(nn.Module):
         self.hrnet = get_cls_net(cfg)
         self.sigmoid_T = self.cfg["MODEL"]["TEMPERATURE"]
         # self.temp_sigmoid = TempSigmoid(T=self.cfg["MODEL"]["TEMPERATURE"])
-        self.temp_sigmoid = TempSigmoid(T=0.1)
+        self.temp_sigmoid = TempSigmoid(T=0.05)
         self._make_head(self.hrnet.last_pre_stage_channels)
 
     # make xray head

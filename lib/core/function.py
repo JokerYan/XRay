@@ -160,14 +160,14 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             loss2 = criterion2(output_c, target_c)
             loss = loss1 * 100 + loss2
 
-            # print('target:')
-            # print(target_c.detach().cpu())
-            # print('output:')
-            # print(output_c.detach().cpu())
-            # print('loss 1:')
-            # print(loss1 * 100)
-            # print('loss 2:')
-            # print(loss2)
+            print('target:')
+            print(target_c.detach().cpu())
+            print('output:')
+            print(output_c.detach().cpu())
+            print('loss 1:')
+            print(loss1 * 100)
+            print('loss 2:')
+            print(loss2)
 
             # measure accuracy and record loss
             losses.update(loss.item(), model_input.size(0))

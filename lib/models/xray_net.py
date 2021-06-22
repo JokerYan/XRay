@@ -23,7 +23,8 @@ class XRayNet(nn.Module):
         self.cfg = cfg
         self.hrnet = get_cls_net(cfg)
         self.sigmoid_T = self.cfg["MODEL"]["TEMPERATURE"]
-        self.temp_sigmoid = TempSigmoid(T=self.cfg["MODEL"]["TEMPERATURE"])
+        # self.temp_sigmoid = TempSigmoid(T=self.cfg["MODEL"]["TEMPERATURE"])
+        self.temp_sigmoid = TempSigmoid(T=0.1)
         self._make_head(self.hrnet.last_pre_stage_channels)
 
     # make xray head
@@ -60,8 +61,8 @@ class XRayNet(nn.Module):
         self.classification_head = nn.Sequential(
             nn.AvgPool2d(self.cfg.MODEL.IMAGE_SIZE[0]),
             nn.Linear(1, 1),
-            nn.Sigmoid(),
-            # self.temp_sigmoid,
+            # nn.Sigmoid(),
+            self.temp_sigmoid,
         )
 
     def forward(self, x):

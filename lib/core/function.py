@@ -40,9 +40,9 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
     elif epoch == 3:
         logger.info('unfreezing hrnet')
         model.module.unfreeze_hrnet()
-    elif epoch >= 5:
-        logger.info('freezing xray')
-        model.module.freeze_xray()
+    # elif epoch >= 5:
+    #     logger.info('freezing xray')
+    #     model.module.freeze_xray()
 
     end = time.time()
     debug_input = None
@@ -72,11 +72,11 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
 
         # compute gradient and do update step
         optimizer.zero_grad()
-        if epoch >= 5:
-            loss2.backward()
-        else:
-            loss.backward()
-        # loss.backward()
+        # if epoch >= 5:
+        #     loss2.backward()
+        # else:
+        #     loss.backward()
+        loss.backward()
         optimizer.step()
 
         # measure accuracy and record loss

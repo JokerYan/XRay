@@ -52,7 +52,7 @@ class Rescale(object):
     def __call__(self, sample):
         video_frame, mask_frame = sample['video_frame'], sample['mask_frame']
 
-        h, w = video_frame.shape[:2]
+        h, w = video_frame.shape[1:]
         if isinstance(self.output_size, int):
             if h > w:
                 new_h, new_w = self.output_size * h / w, self.output_size
@@ -92,7 +92,7 @@ class RandomCrop(object):
 
         print(video_frame.shape)
         print(self.output_size)
-        h, w = video_frame.shape[:2]
+        h, w = video_frame.shape[1:]
         new_h, new_w = self.output_size
 
         top = np.random.randint(0, h - new_h)

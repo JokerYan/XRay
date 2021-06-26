@@ -35,8 +35,9 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
 
     # freeze / unfreeze hrnet
     if epoch == 0:
-        logger.info('freezing hrnet')
-        model.module.freeze_hrnet()
+        pass
+        # logger.info('freezing hrnet')
+        # model.module.freeze_hrnet()
     elif epoch == 3:
         logger.info('unfreezing hrnet')
         model.module.unfreeze_hrnet()

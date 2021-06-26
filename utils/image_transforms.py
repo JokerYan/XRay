@@ -48,23 +48,26 @@ class Rescale(object):
     def __init__(self, output_size):
         assert isinstance(output_size, (int, tuple))
         self.output_size = output_size
+        self.rescale = torchvision.transforms.Resize(output_size)
 
     def __call__(self, sample):
         video_frame, mask_frame = sample['video_frame'], sample['mask_frame']
 
-        h, w = video_frame.shape[:2]
-        if isinstance(self.output_size, int):
-            if h > w:
-                new_h, new_w = self.output_size * h / w, self.output_size
-            else:
-                new_h, new_w = self.output_size, self.output_size * w / h
-        else:
-            new_h, new_w = self.output_size
+        # h, w = video_frame.shape[:2]
+        # if isinstance(self.output_size, int):
+        #     if h > w:
+        #         new_h, new_w = self.output_size * h / w, self.output_size
+        #     else:
+        #         new_h, new_w = self.output_size, self.output_size * w / h
+        # else:
+        #     new_h, new_w = self.output_size
+        #
+        # new_h, new_w = int(new_h), int(new_w)
 
-        new_h, new_w = int(new_h), int(new_w)
-
-        video_frame = skimage_transforms.resize(video_frame, (new_h, new_w), anti_aliasing=True)
-        mask_frame = skimage_transforms.resize(mask_frame, (new_h, new_w), anti_aliasing=True)
+        # video_frame = skimage_transforms.resize(video_frame, (new_h, new_w), anti_aliasing=True)
+        # mask_frame = skimage_transforms.resize(mask_frame, (new_h, new_w), anti_aliasing=True)
+        video_frame = self.rescale(video_frame)
+        mask_frame = self.rescale(mask_frame)
 
         return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
 

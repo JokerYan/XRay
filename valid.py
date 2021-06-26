@@ -145,12 +145,13 @@ def main():
         './data/val_image_selected.csv',
          transforms.Compose([
              # TODO: Change Random Crop to Centre Crop
-             custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0])),
              custom_transforms.ImageToOne(),
              custom_transforms.MaskToXray(),
-             custom_transforms.ToTensor(),
+             custom_transforms.ToTensor(cuda=True),
+             custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0])),
+             # custom_transforms.Grayscale(enabled=config.GRAYSCALE),
              custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                         std=[0.229, 0.224, 0.225])
+                                         std=[0.229, 0.224, 0.225]),
          ]))
 
     valid_loader = torch.utils.data.DataLoader(

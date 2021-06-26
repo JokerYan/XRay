@@ -162,6 +162,8 @@ class ColorJitter(object):
 
 class ToTensor(object):
     """Convert ndarrays in sample to Tensors."""
+    def __init__(self, cuda=False):
+        self.cuda = cuda
 
     def __call__(self, sample):
         video_frame, mask_frame = sample['video_frame'], sample['mask_frame']
@@ -172,8 +174,15 @@ class ToTensor(object):
         video_frame = video_frame.transpose((2, 0, 1))
         # mask_frame = mask_frame.transpose((2, 0, 1))
         mask_frame = np.expand_dims(mask_frame, axis=0)
-        return {'video_frame': torch.from_numpy(video_frame).float(),
-                'mask_frame': torch.from_numpy(mask_frame).float(),
+
+        video_frame = torch.from_numpy(video_frame).float()
+        mask_frame = torch.from_numpy(mask_frame).float()
+
+        if self.cuda:
+            video_frame = video_frame.cuda()
+            mask_frame = mask_frame.cuda()
+        return {'video_frame': video_frame,
+                'mask_frame': mask_frame,
                 'is_fake': sample['is_fake']}
 
 

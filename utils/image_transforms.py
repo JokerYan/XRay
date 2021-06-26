@@ -96,8 +96,8 @@ class RandomCrop(object):
         top = np.random.randint(0, h - new_h)
         left = np.random.randint(0, w - new_w)
 
-        video_frame = video_frame[top: top + new_h, left: left + new_w]
-        mask_frame = mask_frame[top: top + new_h, left: left + new_w]
+        video_frame = video_frame[:, top: top + new_h, left: left + new_w]
+        mask_frame = mask_frame[:, top: top + new_h, left: left + new_w]
 
         return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
 

@@ -2,6 +2,7 @@ import cv2
 import torch
 import time
 import numpy as np
+import torchvision.transforms
 from skimage import transform as skimage_transforms
 import torchvision.transforms as torch_transforms
 
@@ -141,12 +142,22 @@ class HueAndSaturation(object):
         self.hue_and_saturation = iaa.WithHueAndSaturation(
             iaa.WithChannels(0, iaa.Add((0, 50)))
         )
+
     def __call__(self, sample):
         heu_and_saturation_det = self.hue_and_saturation.to_deterministic()
         video_frame = heu_and_saturation_det(image=sample['video_frame'])
         mask_frame = sample['mask_frame']
         return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
 
+
+class ColorJitter(object):
+    def __init__(self):
+        self.color_jitter = torchvision.transforms.ColorJitter(0.1, 0.1, 0.1, 0.1)
+
+    def __call__(self, sample):
+        video_frame = sample['video_frame']
+        video_frame = self.color_jitter(video_frame)
+        return {'video_frame': video_frame, 'mask_frame': sample['mask_frame'], 'is_fake': sample['is_fake']}
 
 
 class ToTensor(object):

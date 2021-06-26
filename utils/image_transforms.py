@@ -90,8 +90,6 @@ class RandomCrop(object):
     def __call__(self, sample):
         video_frame, mask_frame = sample['video_frame'], sample['mask_frame']
 
-        print(video_frame.shape)
-        print(self.output_size)
         h, w = video_frame.shape[1:]
         new_h, new_w = self.output_size
 
@@ -195,6 +193,7 @@ class Normalize(object):
         self.image_normalize = torch_transforms.Normalize(mean=mean, std=std)
 
     def __call__(self, sample):
+        print(sample['video_frame'].shape)
         return {
             'video_frame': self.image_normalize(sample['video_frame']),
             'mask_frame': sample['mask_frame'],

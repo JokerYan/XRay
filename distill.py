@@ -280,6 +280,7 @@ def main():
                                           'final_state.pth.tar')
     logger.info('saving final model state to {}'.format(
         final_model_state_file))
+    logger.info('best validation accuracy: {}'.format(best_perf))
     torch.save(model_student.module.state_dict(), final_model_state_file)
     writer_dict['writer'].close()
 

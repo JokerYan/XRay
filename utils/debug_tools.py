@@ -1,4 +1,5 @@
 import os
+import math
 import cv2
 import numpy as np
 import torch
@@ -27,8 +28,8 @@ def save_image(image, name, normalized=False, debug_dir=default_debug_dir):
     return path
 
 
-def save_image_stack(image_stack, name, max_count=int('inf'), normalized=False, debug_dir=default_debug_dir):
+def save_image_stack(image_stack, name, max_count=math.inf, normalized=False, debug_dir=default_debug_dir):
     # save at most max_count number of images
-    save_count = min(max_count, image_stack.shape[0])
+    save_count = int(min(max_count, image_stack.shape[0]))
     for i in range(save_count):
         save_image(image_stack[i], "{}_{}".format(name, i), normalized, debug_dir)

@@ -16,9 +16,7 @@ import torch
 
 from lib.core.evaluate import cal_accuracy
 from lib.utils.utils import save_checkpoint
-
-from utils.image_preprocessing import show_normalized_images, save_image_to_disk
-
+from utils.debug_tools import save_image
 
 logger = logging.getLogger(__name__)
 
@@ -122,7 +120,7 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
 
 
 def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_log_dir,
-             writer_dict=None, show_image=False, save_image=False):
+             writer_dict=None):
     batch_time = AverageMeter()
     losses = AverageMeter()
     accuracy = AverageMeter()
@@ -142,18 +140,6 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
 
             # print(torch.amax(model_input.detach().cpu(), dim=(1, 2, 3)), torch.amax(output_x.detach().cpu(), dim=(1, 2, 3)))
 
-            if show_image:
-                title = str(target_c[0].cpu().clone().detach().numpy()) + "   " + \
-                        str(output_c[0].cpu().clone().detach().numpy())
-                show_normalized_images(model_input[0], output_x[0], title)
-            if save_image:
-                output_image_dir = os.path.join(output_dir, 'output_images')
-                for k in range(model_input.size()[0]):
-                    output_image = output_x[k]
-                    output_idx = i * model_input.size()[0] + k
-                    output_image_name = str(output_idx) + '.jpg'
-                    save_image_to_disk(output_image, output_image_dir, output_image_name)
-
             target_x = target_x.cuda(non_blocking=True)
             target_c = target_c.cuda(non_blocking=True)
 
@@ -161,14 +147,19 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             loss2 = criterion2(output_c, target_c)
             loss = loss1 * 100 + loss2
 
-            print('target:')
-            print(target_c.detach().cpu())
-            print('output:')
-            print(output_c.detach().cpu())
-            print('loss 1:')
-            print(loss1 * 100)
-            print('loss 2:')
-            print(loss2)
+            if i < 3:
+                save_image(model_input, 'input_{}.jpg'.format(i))
+                save_image(target_x, 'target_x_{}.jpg'.format(i))
+                save_image(output_x, 'output_x_{}.jpg'.format(i))
+
+            # print('target:')
+            # print(target_c.detach().cpu())
+            # print('output:')
+            # print(output_c.detach().cpu())
+            # print('loss 1:')
+            # print(loss1 * 100)
+            # print('loss 2:')
+            # print(loss2)
 
             # measure accuracy and record loss
             losses.update(loss.item(), model_input.size(0))

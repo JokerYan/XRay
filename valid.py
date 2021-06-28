@@ -164,7 +164,7 @@ def main():
 
     # evaluate on validation set
     validate(config, valid_loader, model, criterion1, criterion2, final_output_dir,
-             tb_log_dir, None, show_image=False)
+             tb_log_dir, None)
 
 
 if __name__ == '__main__':

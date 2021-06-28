@@ -106,33 +106,6 @@ def show_image(image, title=""):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-def show_normalized_images(video_frame, mask_frame, title):
-    video_frame = video_frame.cpu().clone().detach().numpy()
-    mask_frame = mask_frame.cpu().clone().detach().numpy()
-    mean = np.asarray([0.485, 0.456, 0.406])
-    std = np.asarray([0.229, 0.224, 0.225])
-    video_frame = video_frame.transpose((1, 2, 0))
-    mask_frame = mask_frame.transpose((1, 2, 0))
-    video_frame = np.multiply(video_frame, std)
-    mean = np.multiply(np.ones_like(video_frame), mean)
-    video_frame = video_frame + mean
-    # video_frame = video_frame * 255
-    # mask_frame = mask_frame * 255
-    mask_frame = np.tile(mask_frame, [3])
-    show_image(np.vstack((video_frame, mask_frame)), title)
-
-
-def save_image_to_disk(image, dir, filename):
-    os.makedirs(dir, exist_ok=True)
-    path = os.path.join(dir, filename)
-    if isinstance(image, torch.Tensor):
-        image = image.detach().cpu().numpy()
-        image = image.transpose((1, 2, 0))
-        image = image * 255
-    cv2.imwrite(path, image)
-    assert os.path.isfile(path)
-    return path
-
 
 def generate_impulse_image_and_csv(image_dir, csv_path):
     size = 256

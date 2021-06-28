@@ -4,6 +4,8 @@ import torch.nn as nn
 import torchvision.transforms as torch_transforms
 
 from lib.core.evaluate import cal_accuracy
+from utils.debug_tools import save_image_stack, clear_debug_image
+
 
 class CWInfAttack(nn.Module):
     '''
@@ -73,6 +75,11 @@ class CWInfAttack(nn.Module):
                 best_delta = avg_delta
         print('Batch finished: Acc: {}\tDelta: {}'.format(best_acc, best_delta))
         pickle.dump(best_adv_images, open('adv_images_batch.pkl', 'wb'))
+
+        clear_debug_image()
+        save_image_stack(images, 'input')
+        save_image_stack(best_adv_images, 'attack')
+
         return best_adv_images, best_acc, best_delta
 
     def get_f_value(self, outputs):

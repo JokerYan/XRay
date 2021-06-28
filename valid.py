@@ -159,7 +159,7 @@ def main():
         batch_size=config.TEST.BATCH_SIZE_PER_GPU*len(gpus),
         shuffle=True,
         num_workers=config.WORKERS,
-        pin_memory=True
+        pin_memory=False
     )
 
     # evaluate on validation set

@@ -28,6 +28,7 @@ def main():
     # original image needed for attack
     valid_dataset = XRayDataset(
         './data/val_image_selected.csv',
+        # normalized transform removed because it is called separately in attack model
         transforms.Compose([
              # TODO: Change Random Crop to Centre Crop
              custom_transforms.ImageToOne(),
@@ -35,8 +36,8 @@ def main():
              custom_transforms.ToTensor(cuda=True),
              custom_transforms.Rescale(int(target_config.MODEL.IMAGE_SIZE[0])),
              # custom_transforms.Grayscale(enabled=config.GRAYSCALE),
-             custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                         std=[0.229, 0.224, 0.225]),
+             # custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
+             #                             std=[0.229, 0.224, 0.225]),
         ]),
         target_class=1,  # only load fake ones
     )

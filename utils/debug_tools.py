@@ -21,8 +21,7 @@ def save_image(image, name, normalized=False, debug_dir=default_debug_dir):
         image = np.multiply(image, std)
         mean = np.multiply(np.ones_like(image), mean)
         image = image + mean
-    print(name, np.max(image))
-    if np.max(image) <= 1.5:
+    if np.max(image) <= 10:
         image = image * 255
     path = os.path.join(debug_dir, name + '.jpg')
     assert cv2.imwrite(path, image)
@@ -40,3 +39,4 @@ def save_image_stack(image_stack, name, max_count=math.inf, normalized=False, de
 def clear_debug_image(debug_dir=default_debug_dir):
     for f in glob.glob(os.path.join(debug_dir, '*.jpg')):
         os.remove(f)
+    print('debug image cleaned')

@@ -1,8 +1,9 @@
 import os
 import math
 import cv2
-import numpy as np
 import torch
+import glob
+import numpy as np
 
 
 default_debug_dir = os.path.join('.', 'debug')
@@ -33,3 +34,8 @@ def save_image_stack(image_stack, name, max_count=math.inf, normalized=False, de
     save_count = int(min(max_count, image_stack.shape[0]))
     for i in range(save_count):
         save_image(image_stack[i], "{}_{}".format(name, i), normalized, debug_dir)
+
+
+def clear_debug_image(debug_dir=default_debug_dir):
+    for f in glob.glob(os.path.join(debug_dir, '*.jpg')):
+        os.remove(f)

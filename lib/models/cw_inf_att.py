@@ -77,8 +77,8 @@ class CWInfAttack(nn.Module):
         pickle.dump(best_adv_images, open('adv_images_batch.pkl', 'wb'))
 
         clear_debug_image()
-        save_image_stack(images, 'input')
-        save_image_stack(best_adv_images, 'attack')
+        save_image_stack(images, 'input', max_count=5)
+        save_image_stack(best_adv_images, 'attack', max_count=5)
 
         return best_adv_images, best_acc, best_delta
 

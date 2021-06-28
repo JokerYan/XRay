@@ -16,7 +16,7 @@ import torch
 
 from lib.core.evaluate import cal_accuracy
 from lib.utils.utils import save_checkpoint
-from utils.debug_tools import save_image
+from utils.debug_tools import save_image, save_image_stack
 
 logger = logging.getLogger(__name__)
 
@@ -148,9 +148,9 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             loss = loss1 * 100 + loss2
 
             if i < 3:
-                save_image(model_input, 'input_{}.jpg'.format(i))
-                save_image(target_x, 'target_x_{}.jpg'.format(i))
-                save_image(output_x, 'output_x_{}.jpg'.format(i))
+                save_image_stack(model_input, 'input_{}'.format(i))
+                save_image_stack(target_x, 'target_x_{}'.format(i))
+                save_image_stack(output_x, 'output_x_{}'.format(i))
 
             # print('target:')
             # print(target_c.detach().cpu())

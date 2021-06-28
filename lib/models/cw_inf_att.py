@@ -64,7 +64,7 @@ class CWInfAttack(nn.Module):
             # print out results
             acc = cal_accuracy(output_c, dummy_labels)
             avg_delta = torch.mean(delta)
-            # print('Acc: {}\tDelta: {}'.format(acc, avg_delta))
+            print('Acc: {}\tDelta: {}'.format(acc, avg_delta))
             if acc > best_acc:
                 best_adv_images = adv_images
                 best_acc = acc

@@ -6,6 +6,7 @@ import torch
 
 default_debug_dir = os.path.join('.', 'debug')
 
+
 def save_image(image, name, normalized=False, debug_dir=default_debug_dir):
     if not os.path.isdir(debug_dir):
         os.makedirs(debug_dir, exist_ok=True)
@@ -25,6 +26,9 @@ def save_image(image, name, normalized=False, debug_dir=default_debug_dir):
     assert os.path.isfile(path)
     return path
 
-def save_image_stack(image_stack, name, normalized=False, debug_dir=default_debug_dir):
-    for i in range(image_stack.shape[0]):
-        save_image(image_stack[i], name + str(i), normalized, debug_dir)
+
+def save_image_stack(image_stack, name, max_count=int('inf'), normalized=False, debug_dir=default_debug_dir):
+    # save at most max_count number of images
+    save_count = min(max_count, image_stack.shape[0])
+    for i in range(save_count):
+        save_image(image_stack[i], "{}_{}".format(name, i), normalized, debug_dir)

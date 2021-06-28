@@ -20,8 +20,8 @@ def save_image(image, name, normalized=False, debug_dir=default_debug_dir):
         image = image + mean
     if np.max(image) <= 1.5:
         image = image * 255
-    path = os.path.join(debug_dir, name, '.jpg')
-    cv2.imwrite(path, image)
+    path = os.path.join(debug_dir, name + '.jpg')
+    assert cv2.imwrite(path, image)
     assert os.path.isfile(path)
     return path
 

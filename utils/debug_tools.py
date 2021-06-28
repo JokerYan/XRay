@@ -39,4 +39,4 @@ def save_image_stack(image_stack, name, max_count=math.inf, normalized=False, de
 def clear_debug_image(debug_dir=default_debug_dir):
     for f in glob.glob(os.path.join(debug_dir, '*.jpg')):
         os.remove(f)
-    print('debug image cleaned')
+    print('debug image cleared')

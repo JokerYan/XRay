@@ -7,7 +7,7 @@ from utils.xray_dataset import XRayDataset
 from lib.models.cw_inf_att import CWInfAttack
 import utils.image_transforms as custom_transforms
 
-target_config_path = 'experiments/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
+target_config_path = 'experiments/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux_exp05.yaml'
 config_path = 'experiments/cw_inf_att.json'
 
 

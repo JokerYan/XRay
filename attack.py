@@ -7,7 +7,6 @@ from utils.xray_dataset import XRayDataset
 from lib.models.cw_inf_att import CWInfAttack
 import utils.image_transforms as custom_transforms
 
-target_config_path = 'experiments/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux_exp05.yaml'
 config_path = 'experiments/cw_inf_att.json'
 
 
@@ -28,13 +27,14 @@ def main():
     valid_dataset = XRayDataset(
         './data/val_image_selected.csv',
         transforms.Compose([
-            # TODO: Change Random Crop to Centre Crop
-            custom_transforms.Rescale(int(target_config.MODEL.IMAGE_SIZE[0])),
-            custom_transforms.ImageToOne(),
-            custom_transforms.MaskToXray(),
-            custom_transforms.ToTensor(),
-            # custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
-            #                             std=[0.229, 0.224, 0.225])
+             # TODO: Change Random Crop to Centre Crop
+             custom_transforms.ImageToOne(),
+             custom_transforms.MaskToXray(),
+             custom_transforms.ToTensor(cuda=True),
+             custom_transforms.Rescale(int(target_config.MODEL.IMAGE_SIZE[0])),
+             # custom_transforms.Grayscale(enabled=config.GRAYSCALE),
+             custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225]),
         ]),
         target_class=1,  # only load fake ones
     )

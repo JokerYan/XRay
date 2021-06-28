@@ -77,4 +77,5 @@ def load_target_model(model_path):
 
 
 if __name__ == '__main__':
+    torch.multiprocessing.set_start_method('spawn')
     main()

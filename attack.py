@@ -8,6 +8,8 @@ from lib.models.cw_inf_att import CWInfAttack
 import utils.image_transforms as custom_transforms
 
 config_path = 'experiments/cw_inf_att.json'
+# to change target model, both the 'model_path' in the above config
+# and '--cfg' path in attack.sh needs to be changed
 
 
 def main():

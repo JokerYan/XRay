@@ -13,6 +13,7 @@ import time
 import logging
 
 import torch
+import numpy as np
 
 from lib.core.evaluate import cal_accuracy, cal_roc_auc
 from lib.utils.utils import save_checkpoint
@@ -124,6 +125,8 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
     batch_time = AverageMeter()
     losses = AverageMeter()
     accuracy = AverageMeter()
+    output_list = []
+    target_list = []
 
     # switch to evaluate mode
     model.eval()
@@ -171,8 +174,10 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             # top5.update(prec5[0], input.size(0))
 
             # evaluation
-            # acc = cal_accuracy(output_c, target_c)
-            acc = cal_roc_auc(output_c, target_c)
+            acc = cal_accuracy(output_c, target_c)
+            output_list.append(output_c.detach().cpu().numpy())
+            target_list.append(target_c.detach().cpu().numpy())
+            print(np.array(output_list).reshape(-1))
             accuracy.update(acc)
 
             # measure elapsed time

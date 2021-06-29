@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.nn import BatchNorm2d
-from torch.nn.functional import interpolate, sigmoid
+from torch.nn.functional import interpolate
 
 from lib.models.cls_hrnet import get_cls_net, BN_MOMENTUM
 
@@ -78,7 +78,7 @@ class XRayNet(nn.Module):
                         mode='bilinear', align_corners=False)
         # x_temp = sigmoid(x / self.sigmoid_T)
         # x_temp = self.temp_sigmoid(x)
-        x = sigmoid(x)
+        x = torch.sigmoid(x)
         c = self.classification_head(x)
         c = c.reshape([-1])
 

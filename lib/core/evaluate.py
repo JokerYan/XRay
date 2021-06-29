@@ -9,6 +9,7 @@ from __future__ import division
 from __future__ import print_function
 
 import torch
+from sklearn.metrics import roc_auc_score
 
 
 # def cal_accuracy(output, target, topk=(1,)):
@@ -36,3 +37,8 @@ def cal_accuracy(output, target):
         target = torch.where(target > 0.5, ones, zeros)
         # print(prediction, target)
         return 1 - torch.mean(torch.abs(prediction - target))
+
+
+def cal_roc_auc(output, target):
+    with torch.no_grad():
+        return roc_auc_score(target, output)

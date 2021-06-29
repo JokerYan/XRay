@@ -14,7 +14,7 @@ import logging
 
 import torch
 
-from lib.core.evaluate import cal_accuracy
+from lib.core.evaluate import cal_accuracy, cal_roc_auc
 from lib.utils.utils import save_checkpoint
 from utils.debug_tools import save_image, save_image_stack, clear_debug_image
 
@@ -175,7 +175,8 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             # top5.update(prec5[0], input.size(0))
 
             # evaluation
-            acc = cal_accuracy(output_c, target_c)
+            # acc = cal_accuracy(output_c, target_c)
+            acc = cal_roc_auc(output_c, target_c)
             accuracy.update(acc)
 
             # measure elapsed time

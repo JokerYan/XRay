@@ -177,17 +177,18 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             acc = cal_accuracy(output_c, target_c)
             output_list.append(output_c.detach().cpu().numpy())
             target_list.append(target_c.detach().cpu().numpy())
-            print(np.array(output_list).reshape(-1))
             accuracy.update(acc)
 
             # measure elapsed time
             batch_time.update(time.time() - end)
             end = time.time()
 
+        auc = cal_roc_auc(np.array(output_list).reshape(-1), np.array(target_list).reshape(-1))
         msg = 'Test: Time {batch_time.avg:.3f}\t' \
               'Loss {loss.avg:.4f}\t' \
-              'Accuracy {accuracy.avg:.3f}\t'.format(
-                  batch_time=batch_time, loss=losses, accuracy=accuracy)
+              'Accuracy {accuracy.avg:.3f}\t' \
+              'AUC {auc:.3f}\t'.format(
+                  batch_time=batch_time, loss=losses, accuracy=accuracy, auc=auc)
         logger.info(msg)
 
         if writer_dict:

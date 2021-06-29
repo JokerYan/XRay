@@ -185,6 +185,10 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
 
         output_list = np.array(output_list).reshape(-1)
         target_list = np.array(target_list).reshape(-1)
+        print(output_list[10:])
+        print(output_list[:-10])
+        print(target_list[10:])
+        print(target_list[:-10])
         auc = cal_roc_auc(output_list, target_list)
         msg = 'Test: Time {batch_time.avg:.3f}\t' \
               'Loss {loss.avg:.4f}\t' \

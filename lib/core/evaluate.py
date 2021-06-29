@@ -41,4 +41,4 @@ def cal_accuracy(output, target):
 
 def cal_roc_auc(output, target):
     with torch.no_grad():
-        return roc_auc_score(target, output)
+        return roc_auc_score(target.detach().cpu(), output.detach().cpu())

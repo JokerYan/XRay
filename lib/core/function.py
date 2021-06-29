@@ -182,7 +182,6 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             # measure elapsed time
             batch_time.update(time.time() - end)
             end = time.time()
-            break
 
         output_list = np.array(output_list).reshape(-1)
         target_list = np.array(target_list).reshape(-1)

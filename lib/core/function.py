@@ -183,7 +183,9 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             batch_time.update(time.time() - end)
             end = time.time()
 
-        auc = cal_roc_auc(np.array(output_list).reshape(-1), np.array(target_list).reshape(-1))
+        output_list = np.array(output_list).reshape(-1)
+        target_list = np.array(target_list).reshape(-1)
+        auc = cal_roc_auc(output_list, target_list)
         msg = 'Test: Time {batch_time.avg:.3f}\t' \
               'Loss {loss.avg:.4f}\t' \
               'Accuracy {accuracy.avg:.3f}\t' \

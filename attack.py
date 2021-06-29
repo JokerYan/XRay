@@ -48,7 +48,7 @@ def main():
         batch_size=config_json['batch_size']*len(gpus),
         shuffle=False,
         num_workers=target_config.WORKERS,
-        pin_memory=False
+        pin_memory=True
     )
 
     best_acc_list = []

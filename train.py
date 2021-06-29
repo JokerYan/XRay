@@ -202,7 +202,7 @@ def main():
         batch_size=config.TRAIN.BATCH_SIZE_PER_GPU*len(gpus),
         shuffle=True,
         num_workers=config.WORKERS,
-        pin_memory=False
+        pin_memory=True
     )
 
     # valid_loader = torch.utils.data.DataLoader(
@@ -236,7 +236,7 @@ def main():
         batch_size=config.TEST.BATCH_SIZE_PER_GPU*len(gpus),
         shuffle=False,
         num_workers=config.WORKERS,
-        pin_memory=False
+        pin_memory=True
     )
 
     for epoch in range(last_epoch, config.TRAIN.END_EPOCH):

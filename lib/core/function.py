@@ -69,8 +69,6 @@ def train(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
         loss2 = criterion2(output_c, target_c)
         loss = loss1 * 100 + loss2
 
-        del data
-
         # compute gradient and do update step
         optimizer.zero_grad()
         # if epoch >= 5:
@@ -164,8 +162,6 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             # print('loss 2:')
             # print(loss2)
 
-            del data
-
             # measure accuracy and record loss
             losses.update(loss.item(), model_input.size(0))
 
@@ -244,8 +240,6 @@ def distill(config, train_loader, model_teacher, model_student, criterion1, crit
         # print(loss1 * 100)
         # print('loss 2:')
         # print(loss2)
-
-        del data
 
         # compute gradient and do update step
         optimizer.zero_grad()

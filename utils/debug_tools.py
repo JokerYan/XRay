@@ -79,7 +79,7 @@ def visualize_transform():
              custom_transforms.ImageToOne(),
              custom_transforms.MaskToXray(),
              custom_transforms.ToTensor(cuda=False),
-             custom_transforms.ColorJitter(),
+             custom_transforms.Affine(),
              custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0])),
              # custom_transforms.Grayscale(enabled=config.GRAYSCALE),
              custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],

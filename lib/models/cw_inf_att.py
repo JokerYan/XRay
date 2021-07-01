@@ -76,6 +76,8 @@ class CWInfAttack(nn.Module):
                 best_output_x = output_x
                 best_acc = acc
                 best_delta = avg_delta
+            if acc == 1:
+                break
         print('Batch finished: Acc: {}\tDelta: {}'.format(best_acc, best_delta))
         pickle.dump(best_adv_images, open('adv_images_batch.pkl', 'wb'))
 

@@ -35,6 +35,7 @@ import torchvision.transforms as transforms
 import lib.models.cls_hrnet as cls_hrnet
 from lib.models.xray_net import XRayNet
 import utils.image_transforms as custom_transforms
+from utils.args_holder import Args
 from utils.image_preprocessing import generate_impulse_image_and_csv
 from utils.xray_dataset import XRayDataset
 

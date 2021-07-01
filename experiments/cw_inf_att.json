@@ -1,5 +1,5 @@
 {
-  "model_path": "./output/ILSVRC/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux_exp04/model_best.pth.tar",
+  "model_path": "./output/ILSVRC/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux_exp03/model_best.pth.tar",
   "c": 150,
   "lr": 0.1,
   "momentum": 0.9,

@@ -234,7 +234,7 @@ class StrengthenImpulse(object):
 
 
 class Noise(object):
-    def __init__(self, variance=0.05):
+    def __init__(self, variance=0.01):
         self.variance = variance
 
     def __call__(self, sample):

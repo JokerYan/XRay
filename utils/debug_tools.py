@@ -89,3 +89,8 @@ def visualize_transform():
         target_c = data['is_fake']
         output_x, output_c = model(model_input)
 
+        clear_debug_image()
+        save_image_stack(model_input, 'model_input', 1)
+        save_image_stack(target_x, 'target', 1)
+        save_image_stack(output_x, 'output', 1)
+

@@ -38,6 +38,7 @@ class CWInfAttack(nn.Module):
         tau = 1
 
         best_adv_images = images.clone().detach()
+        best_output_x = None
         best_acc = 0
         best_delta = 1
 
@@ -45,7 +46,7 @@ class CWInfAttack(nn.Module):
 
         for step in range(self.steps):
             adv_images = self.w_to_adv_images(w)
-            _, output_c = self.model(self.Normalize(adv_images))
+            output_x, output_c = self.model(self.Normalize(adv_images))
 
             f_value = self.c * self.get_f_value(output_c)
             delta = self.w_to_delta(w, images)
@@ -67,10 +68,12 @@ class CWInfAttack(nn.Module):
             print('Acc: {}\tDelta: {}'.format(acc, avg_delta))
             if acc > best_acc:
                 best_adv_images = adv_images
+                best_output_x = output_x
                 best_acc = acc
                 best_delta = avg_delta
             if acc == best_acc and avg_delta < best_delta:
                 best_adv_images = adv_images
+                best_output_x = output_x
                 best_acc = acc
                 best_delta = avg_delta
         print('Batch finished: Acc: {}\tDelta: {}'.format(best_acc, best_delta))
@@ -79,6 +82,7 @@ class CWInfAttack(nn.Module):
         clear_debug_image()
         save_image_stack(images, 'input', max_count=5)
         save_image_stack(best_adv_images, 'attack', max_count=5)
+        save_image_stack(best_output_x, 'output', max_count=5)
 
         return best_adv_images, best_acc, best_delta
 

@@ -39,6 +39,7 @@ from tensorboardX import SummaryWriter
 import lib.models.cls_hrnet as cls_hrnet
 from lib.models.xray_net import XRayNet
 import utils.image_transforms as custom_transforms
+from utils.args_holder import Args
 from utils.xray_dataset import XRayDataset
 
 from lib.config import config
@@ -48,31 +49,9 @@ from lib.utils.modelsummary import get_model_summary
 from lib.utils.utils import get_optimizer, save_checkpoint, create_logger
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Train classification network')
-    
-    parser.add_argument('--cfg',
-                        help='experiment configure file name',
-                        required=True,
-                        type=str)
-
-    parser.add_argument('--modelDir',
-                        help='model directory',
-                        type=str,
-                        default='')
-    parser.add_argument('--logDir',
-                        help='log directory',
-                        type=str,
-                        default='')
-    parser.add_argument('--dataDir',
-                        help='data directory',
-                        type=str,
-                        default='')
-    parser.add_argument('--testModel',
-                        help='testModel',
-                        type=str,
-                        default='')
-
-    args = parser.parse_args()
+    args = Args()
+    args.cfg = 'experiments/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux_distill.yaml'
+    args.testModel = 'hrnetv2_w64_imagenet_pretrained.pth'
     update_config(config, args)
 
     return args, config

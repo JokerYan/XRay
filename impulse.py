@@ -46,38 +46,21 @@ from lib.utils.utils import get_optimizer, save_checkpoint, create_logger
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Train keypoints network')
-
-    parser.add_argument('--cfg',
-                        help='experiment configure file name',
-                        required=True,
-                        type=str)
-
-    parser.add_argument('--modelDir',
-                        help='model directory',
-                        type=str,
-                        default='')
-    parser.add_argument('--logDir',
-                        help='log directory',
-                        type=str,
-                        default='')
-    parser.add_argument('--dataDir',
-                        help='data directory',
-                        type=str,
-                        default='')
-    parser.add_argument('--testModel',
-                        help='testModel',
-                        type=str,
-                        default='')
-
-    args = parser.parse_args()
+    args = Args()
+    args.cfg = 'experiments/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
+    args.testModel = 'hrnetv2_w64_imagenet_pretrained.pth'
     update_config(config, args)
 
-    return args
+    return args, config
+
+def construct_model():
+    args, config = parse_args()
+    model = XRayNet(config)
+    return model, config
 
 
 def main():
-    args = parse_args()
+    args, config = parse_args()
 
     logger, final_output_dir, tb_log_dir = create_logger(
         config, args.cfg, 'valid')

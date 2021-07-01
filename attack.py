@@ -2,15 +2,30 @@ import json
 import torch
 import torchvision.transforms as transforms
 
-from train import construct_model
+from lib import config
+from lib.config import update_config
+from lib.models.xray_net import XRayNet
+from utils.args_holder import Args
 from utils.xray_dataset import XRayDataset
 from lib.models.cw_inf_att import CWInfAttack
 import utils.image_transforms as custom_transforms
 
 config_path = 'experiments/cw_inf_att.json'
 # to change target model, both the 'model_path' in the above config
-# and '--cfg' path in attack.sh needs to be changed
+# and 'args.cfg' path in parse_args()
 
+def parse_args():
+    args = Args()
+    args.cfg = 'experiments/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
+    args.testModel = 'hrnetv2_w64_imagenet_pretrained.pth'
+    update_config(config, args)
+
+    return args, config
+
+def construct_model():
+    args, config = parse_args()
+    model = XRayNet(config)
+    return model, config
 
 def main():
     config_json = json.load(open(config_path))

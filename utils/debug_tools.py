@@ -57,7 +57,8 @@ def visualize_transform():
     model_state = torch.load(os.path.join(
         'output/ILSVRC/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux',
         'model_best.pth.tar'))
-    model.load_state_dict(model_state).cuda()
+    model.load_state_dict(model_state)
+    model = model.cuda()
 
     valid_dataset = XRayDataset(
         './data/val_image_selected.csv',

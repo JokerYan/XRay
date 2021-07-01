@@ -94,8 +94,8 @@ def visualize_transform():
 
     data_transformed = valid_dataset_transformed[0]
     model_input_transformed = torch.unsqueeze(data_transformed['video_frame'], 0).cuda()
-    target_x_transformed = torch.unsqueeze(data['mask_frame'], 0)
-    # target_c_transformed = torch.unsqueeze(data['is_fake'], 0)
+    target_x_transformed = torch.unsqueeze(data_transformed['mask_frame'], 0)
+    # target_c_transformed = torch.unsqueeze(data_transformed['is_fake'], 0)
     output_x_transformed, output_c_transformed = model(model_input_transformed)
 
     clear_debug_image()

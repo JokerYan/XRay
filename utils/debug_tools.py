@@ -75,13 +75,6 @@ def visualize_transform():
              custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225]),
          ]))
-    valid_loader = torch.utils.data.DataLoader(
-        valid_dataset,
-        batch_size=config.TEST.BATCH_SIZE_PER_GPU*len(gpus),
-        shuffle=False,
-        num_workers=config.WORKERS,
-        pin_memory=True
-    )
     valid_dataset_transformed = XRayDataset(
         './data/val_image_selected.csv',
          transforms.Compose([
@@ -95,31 +88,24 @@ def visualize_transform():
              custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225]),
          ]))
-    valid_loader_transformed = torch.utils.data.DataLoader(
-        valid_dataset,
-        batch_size=config.TEST.BATCH_SIZE_PER_GPU*len(gpus),
-        shuffle=False,
-        num_workers=config.WORKERS,
-        pin_memory=True
-    )
 
-    data = valid_loader[0]
+    data = valid_dataset[0]
     model_input = data['video_frame']
     target_x = data['mask_frame']
     target_c = data['is_fake']
     output_x, output_c = model(model_input)
 
-    data_transformed = valid_loader_transformed[0]
+    data_transformed = valid_dataset_transformed[0]
     model_input_transformed = data_transformed['video_frame']
     target_x_transformed = data_transformed['mask_frame']
     target_c_transformed = data_transformed['is_fake']
     output_x_transformed, output_c_transformed = model(model_input_transformed)
 
     clear_debug_image()
-    save_image_stack(model_input, 'model_input', 1)
-    save_image_stack(target_x, 'target', 1)
-    save_image_stack(output_x, 'output', 1)
-    save_image_stack(model_input_transformed, 'model_input_transformed', 1)
-    save_image_stack(target_x_transformed, 'target_transformed', 1)
-    save_image_stack(output_x_transformed, 'output_transformed', 1)
+    save_image(model_input, 'model_input', normalized=True)
+    save_image(target_x, 'target')
+    save_image(output_x, 'output')
+    save_image(model_input_transformed, 'model_input_transformed', normalized=True)
+    save_image(target_x_transformed, 'target_transformed')
+    save_image(output_x_transformed, 'output_transformed')
 

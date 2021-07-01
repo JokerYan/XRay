@@ -4,7 +4,12 @@ import cv2
 import torch
 import glob
 import numpy as np
+from torch.backends import cudnn
 
+from lib import config
+from lib.config import update_config
+from lib.models.xray_net import XRayNet
+from utils.model_loader import Args
 
 default_debug_dir = os.path.join('.', 'debug')
 
@@ -40,3 +45,20 @@ def clear_debug_image(debug_dir=default_debug_dir):
     for f in glob.glob(os.path.join(debug_dir, '*.jpg')):
         os.remove(f)
     print('debug image cleared')
+
+
+# def visualize_transform():
+#     args = Args()
+#     args.cfg = 'experiments/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
+#     args.testModel = 'hrnetv2_w64_imagenet_pretrained.pth'
+#     update_config(config, args)
+#     model = XRayNet(config)
+#
+#     # cudnn related setting
+#     cudnn.benchmark = config.CUDNN.BENCHMARK
+#     torch.backends.cudnn.deterministic = config.CUDNN.DETERMINISTIC
+#     torch.backends.cudnn.enabled = config.CUDNN.ENABLED
+#     gpus = list(config.GPUS)
+#     model = torch.nn.DataParallel(model, device_ids=gpus).cuda()
+#
+#

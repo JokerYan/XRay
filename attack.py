@@ -5,7 +5,7 @@ import torchvision.transforms as transforms
 from lib import config
 from lib.config import update_config
 from lib.models.xray_net import XRayNet
-from utils.args_holder import Args
+from utils.model_loader import Args, construct_model
 from utils.xray_dataset import XRayDataset
 from lib.models.cw_inf_att import CWInfAttack
 import utils.image_transforms as custom_transforms
@@ -14,18 +14,17 @@ config_path = 'experiments/cw_inf_att.json'
 # to change target model, both the 'model_path' in the above config
 # and 'args.cfg' path in parse_args()
 
-def parse_args():
-    args = Args()
-    args.cfg = 'experiments/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
-    args.testModel = 'hrnetv2_w64_imagenet_pretrained.pth'
-    update_config(config, args)
+cfg_path = 'experiments/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
+pretrained_model = 'hrnetv2_w64_imagenet_pretrained.pth'
 
-    return args, config
-
-def construct_model():
-    args, config = parse_args()
-    model = XRayNet(config)
-    return model, config
+def load_target_model(model_path):
+    model, target_config = construct_model(cfg_path, pretrained_model)
+    state_dict = torch.load(model_path)
+    model.load_state_dict(state_dict)
+    model = model.cuda()
+    gpus = list(target_config.GPUS)
+    model = torch.nn.DataParallel(model, device_ids=gpus).cuda()
+    return model, target_config
 
 def main():
     config_json = json.load(open(config_path))
@@ -81,15 +80,6 @@ def main():
         sum(best_delta_list) / len(best_delta_list)
     ))
 
-
-def load_target_model(model_path):
-    model, target_config = construct_model()
-    state_dict = torch.load(model_path)
-    model.load_state_dict(state_dict)
-    model = model.cuda()
-    gpus = list(target_config.GPUS)
-    model = torch.nn.DataParallel(model, device_ids=gpus).cuda()
-    return model, target_config
 
 
 if __name__ == '__main__':

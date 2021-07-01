@@ -35,7 +35,7 @@ import torchvision.transforms as transforms
 import lib.models.cls_hrnet as cls_hrnet
 from lib.models.xray_net import XRayNet
 import utils.image_transforms as custom_transforms
-from utils.args_holder import Args
+from utils.model_loader import Args, construct_model
 from utils.image_preprocessing import generate_impulse_image_and_csv
 from utils.xray_dataset import XRayDataset
 
@@ -46,38 +46,18 @@ from lib.utils.modelsummary import get_model_summary
 from lib.utils.utils import get_optimizer, save_checkpoint, create_logger
 
 
-def parse_args():
-    args = Args()
-    args.cfg = 'experiments/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
-    args.testModel = 'hrnetv2_w64_imagenet_pretrained.pth'
-    update_config(config, args)
-
-    return args, config
-
-def construct_model():
-    args, config = parse_args()
-    model = XRayNet(config)
-    return model, config
+cfg_path = 'experiments/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
+pretrained_model = 'hrnetv2_w64_imagenet_pretrained.pth'
 
 
 def main():
-    args, config = parse_args()
+    model, args, config = construct_model(cfg_path, pretrained_model)
 
     logger, final_output_dir, tb_log_dir = create_logger(
         config, args.cfg, 'valid')
 
     logger.info(pprint.pformat(args))
     logger.info(pprint.pformat(config))
-
-    # cudnn related setting
-    cudnn.benchmark = config.CUDNN.BENCHMARK
-    torch.backends.cudnn.deterministic = config.CUDNN.DETERMINISTIC
-    torch.backends.cudnn.enabled = config.CUDNN.ENABLED
-
-    # model = eval('models.'+config.MODEL.NAME+'.get_cls_net')(
-    #     config)
-    # model = cls_hrnet.get_cls_net(config)
-    model = XRayNet(config)
 
     dump_input = torch.rand(
         (1, 3, config.MODEL.IMAGE_SIZE[1], config.MODEL.IMAGE_SIZE[0])

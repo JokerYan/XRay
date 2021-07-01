@@ -61,6 +61,8 @@ def visualize_transform():
     gpus = list(config.GPUS)
     model = torch.nn.DataParallel(model, device_ids=gpus).cuda()
 
+    target_transform = custom_transforms.ColorJitter()
+
     valid_dataset = XRayDataset(
         './data/val_image_selected.csv',
          transforms.Compose([
@@ -76,21 +78,48 @@ def visualize_transform():
     valid_loader = torch.utils.data.DataLoader(
         valid_dataset,
         batch_size=config.TEST.BATCH_SIZE_PER_GPU*len(gpus),
-        shuffle=True,
+        shuffle=False,
+        num_workers=config.WORKERS,
+        pin_memory=True
+    )
+    valid_dataset_transformed = XRayDataset(
+        './data/val_image_selected.csv',
+         transforms.Compose([
+             # TODO: Change Random Crop to Centre Crop
+             custom_transforms.ImageToOne(),
+             custom_transforms.MaskToXray(),
+             custom_transforms.ToTensor(cuda=False),
+             custom_transforms.ColorJitter(),
+             custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0])),
+             # custom_transforms.Grayscale(enabled=config.GRAYSCALE),
+             custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225]),
+         ]))
+    valid_loader_transformed = torch.utils.data.DataLoader(
+        valid_dataset,
+        batch_size=config.TEST.BATCH_SIZE_PER_GPU*len(gpus),
+        shuffle=False,
         num_workers=config.WORKERS,
         pin_memory=True
     )
 
-    for i, data in enumerate(valid_loader):
-        if i > 0:
-            break
-        model_input = data['video_frame']
-        target_x = data['mask_frame']
-        target_c = data['is_fake']
-        output_x, output_c = model(model_input)
+    data = valid_loader[0]
+    model_input = data['video_frame']
+    target_x = data['mask_frame']
+    target_c = data['is_fake']
+    output_x, output_c = model(model_input)
 
-        clear_debug_image()
-        save_image_stack(model_input, 'model_input', 1)
-        save_image_stack(target_x, 'target', 1)
-        save_image_stack(output_x, 'output', 1)
+    data_transformed = valid_loader_transformed[0]
+    model_input_transformed = data_transformed['video_frame']
+    target_x_transformed = data_transformed['mask_frame']
+    target_c_transformed = data_transformed['is_fake']
+    output_x_transformed, output_c_transformed = model(model_input_transformed)
+
+    clear_debug_image()
+    save_image_stack(model_input, 'model_input', 1)
+    save_image_stack(target_x, 'target', 1)
+    save_image_stack(output_x, 'output', 1)
+    save_image_stack(model_input_transformed, 'model_input_transformed', 1)
+    save_image_stack(target_x_transformed, 'target_transformed', 1)
+    save_image_stack(output_x_transformed, 'output_transformed', 1)
 

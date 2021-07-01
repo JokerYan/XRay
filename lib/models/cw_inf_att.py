@@ -63,6 +63,7 @@ class CWInfAttack(nn.Module):
             optimizer.step()
 
             # print out results
+            print(output_c.detach().shape)
             acc = cal_accuracy(output_c, dummy_labels)
             avg_delta = torch.mean(delta)
             print('Acc: {}\tDelta: {}'.format(acc, avg_delta))

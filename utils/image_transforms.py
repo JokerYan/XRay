@@ -240,6 +240,7 @@ class Noise(object):
     def __call__(self, sample):
         frame_image = sample['video_frame']
         noise_image = torch.randn_like(frame_image) * self.variance
+        print(noise_image)
         return {
             'video_frame': noise_image,
             'mask_frame': sample['mask_frame'],

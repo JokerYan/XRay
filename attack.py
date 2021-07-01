@@ -18,7 +18,7 @@ cfg_path = 'experiments/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.
 pretrained_model = 'hrnetv2_w64_imagenet_pretrained.pth'
 
 def load_target_model(model_path):
-    model, target_config = construct_model(cfg_path, pretrained_model)
+    model, args, target_config = construct_model(cfg_path, pretrained_model)
     state_dict = torch.load(model_path)
     model.load_state_dict(state_dict)
     model = model.cuda()

@@ -234,14 +234,14 @@ class StrengthenImpulse(object):
 
 
 class Noise(object):
-    def __init__(self, variance=0.5):
+    def __init__(self, variance=0.03):
         self.variance = variance
 
     def __call__(self, sample):
         frame_image = sample['video_frame']
         noise_image = torch.randn_like(frame_image) * self.variance
         return {
-            'video_frame': frame_image,
+            'video_frame': noise_image,
             'mask_frame': sample['mask_frame'],
             'is_fake': sample['is_fake']
         }

@@ -57,11 +57,7 @@ def visualize_transform():
     model_state = torch.load(os.path.join(
         'output/ILSVRC/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux',
         'model_best.pth.tar'))
-    model.load_state_dict(model_state)
-    gpus = list(config.GPUS)
-    model = torch.nn.DataParallel(model, device_ids=gpus).cuda()
-
-    target_transform = custom_transforms.ColorJitter()
+    model.load_state_dict(model_state).cuda()
 
     valid_dataset = XRayDataset(
         './data/val_image_selected.csv',
@@ -90,22 +86,22 @@ def visualize_transform():
          ]))
 
     data = valid_dataset[0]
-    model_input = data['video_frame']
-    target_x = data['mask_frame']
-    target_c = data['is_fake']
+    model_input = torch.unsqueeze(data['video_frame'], 0)
+    target_x = torch.unsqueeze(data['mask_frame'], 0)
+    target_c = torch.unsqueeze(data['is_fake'], 0)
     output_x, output_c = model(model_input)
 
     data_transformed = valid_dataset_transformed[0]
-    model_input_transformed = data_transformed['video_frame']
-    target_x_transformed = data_transformed['mask_frame']
-    target_c_transformed = data_transformed['is_fake']
+    model_input_transformed = torch.unsqueeze(data_transformed['video_frame'], 0)
+    target_x_transformed = torch.unsqueeze(data['mask_frame'], 0)
+    target_c_transformed = torch.unsqueeze(data['is_fake'], 0)
     output_x_transformed, output_c_transformed = model(model_input_transformed)
 
     clear_debug_image()
-    save_image(model_input, 'model_input', normalized=True)
-    save_image(target_x, 'target')
-    save_image(output_x, 'output')
-    save_image(model_input_transformed, 'model_input_transformed', normalized=True)
-    save_image(target_x_transformed, 'target_transformed')
-    save_image(output_x_transformed, 'output_transformed')
+    save_image_stack(model_input, 'model_input', normalized=True)
+    save_image_stack(target_x, 'target')
+    save_image_stack(output_x, 'output')
+    save_image_stack(model_input_transformed, 'model_input_transformed', normalized=True)
+    save_image_stack(target_x_transformed, 'target_transformed')
+    save_image_stack(output_x_transformed, 'output_transformed')
 

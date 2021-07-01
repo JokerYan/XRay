@@ -7,7 +7,7 @@ from lib.models.cls_hrnet import get_cls_net, BN_MOMENTUM
 
 
 class TempSigmoid(nn.Module):
-    def __init__(self, T=1):
+    def __init__(self, T=1.0):
         super().__init__()
         self.T = T
 

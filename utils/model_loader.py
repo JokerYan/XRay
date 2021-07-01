@@ -1,7 +1,7 @@
 import torch
 from torch.backends import cudnn
 
-from lib import config
+from lib.config import config
 from lib.config import update_config
 from lib.models.xray_net import XRayNet
 

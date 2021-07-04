@@ -336,10 +336,10 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         model_input_neighbour = get_input_neighbour(model_input_teacher, model_input_teacher.grad.data)
         neighbour_x, neighbour_c = model_teacher(model_input_neighbour)
         clear_debug_image()
-        save_image_stack(model_input_teacher, 'teacher input', 5, normalized=True)
-        save_image_stack(model_input_neighbour, 'neighbour input', 5, normalized=True)
-        save_image_stack(teacher_x, 'teacher output', 5)
-        save_image_stack(neighbour_x, 'neighbour output', 5)
+        save_image_stack(model_input_teacher, 'teacher input', 10, normalized=True)
+        save_image_stack(model_input_neighbour, 'neighbour input', 10, normalized=True)
+        save_image_stack(teacher_x, 'teacher output', 10)
+        save_image_stack(neighbour_x, 'neighbour output', 10)
 
         output_x, output_c = model_student(model_input_teacher)
 
@@ -397,7 +397,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
 
 
 def get_input_neighbour(input_data, grad):
-    target_mean = 0.0015
+    target_mean = 0.002
     batch_size = grad.shape[0]
 
     # grad mean calculated based on absolute value

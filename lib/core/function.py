@@ -337,7 +337,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         save_image_stack(model_input_teacher, 'teacher input', 3, normalized=True)
         save_image_stack(model_input_neighbour, 'neighbour input', 3, normalized=True)
 
-        output_x, output_c = model_student(model_input_student)
+        output_x, output_c = model_student(model_input_teacher)
 
         target_x = target_x.cuda(non_blocking=True)
         target_c = target_c.cuda(non_blocking=True)

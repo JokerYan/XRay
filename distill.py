@@ -44,7 +44,7 @@ from utils.xray_dataset import XRayDataset
 
 from lib.config import config
 from lib.config import update_config
-from lib.core.function import validate, train, distill
+from lib.core.function import validate, train, distill, smooth_distill
 from lib.utils.modelsummary import get_model_summary
 from lib.utils.utils import get_optimizer, save_checkpoint, create_logger
 
@@ -213,7 +213,7 @@ def main():
 
     for epoch in range(last_epoch, config.TRAIN.END_EPOCH):
         # train for one epoch
-        distill(config, train_loader, model_teacher, model_student, criterion1, criterion2, optimizer, epoch,
+        smooth_distill(config, train_loader, model_teacher, model_student, criterion1, criterion2, optimizer, epoch,
               final_output_dir, tb_log_dir, writer_dict)
         lr_scheduler.step()
         # evaluate on validation set

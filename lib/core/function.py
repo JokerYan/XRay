@@ -299,6 +299,93 @@ def distill(config, train_loader, model_teacher, model_student, criterion1, crit
             }, False, output_dir, filename='mini_checkpoint.pth.tar')
 
 
+def smooth_distill(config, train_loader, model_teacher, model_student, criterion1, criterion2, optimizer, epoch,
+          output_dir, tb_log_dir, writer_dict):
+    batch_time = AverageMeter()
+    data_time = AverageMeter()
+    losses = AverageMeter()
+    accuracy = AverageMeter()
+
+    # freeze / unfreeze hrnet
+    if epoch == 0:
+        model_student.module.freeze_hrnet()
+    elif epoch == 3:
+        model_student.module.unfreeze_hrnet()
+
+    # switch to train mode
+    model_teacher.eval()
+    model_student.train()
+
+    end = time.time()
+    for i, data in enumerate(train_loader):
+        model_input = data['video_frame']
+        model_input.requires_grad = True
+        # target_x = data['mask_frame']
+        # target_c = data['is_fake']
+
+        # measure data loading time
+        data_time.update(time.time() - end)
+        #target = target - 1 # Specific for imagenet
+
+        # compute output
+        target_x, target_c = model_teacher(model_input)
+        output_x, output_c = model_student(model_input)
+
+
+        target_x = target_x.cuda(non_blocking=True)
+        target_c = target_c.cuda(non_blocking=True)
+
+        loss1 = criterion1(output_x, target_x.detach())
+        loss2 = criterion2(output_c, target_c.detach())
+        loss = loss1 * 100 + loss2
+
+        # compute gradient and do update step
+        optimizer.zero_grad()
+        loss.backward()
+        print(model_input.grad.data)
+        optimizer.step()
+
+        # measure accuracy and record loss
+        losses.update(loss.item(), model_input.size(0))
+
+        # evaluation
+        acc = cal_accuracy(output_c, target_c)
+        accuracy.update(acc)
+
+        # measure elapsed time
+        batch_time.update(time.time() - end)
+        end = time.time()
+
+        if i % config.PRINT_FREQ == 0:
+            msg = 'Epoch: [{0}][{1}/{2}]\t' \
+                  'Time {batch_time.val:.3f}s ({batch_time.avg:.3f}s)\t' \
+                  'Speed {speed:.1f} samples/s\t' \
+                  'Data {data_time.val:.3f}s ({data_time.avg:.3f}s)\t' \
+                  'Loss {loss.val:.5f} ({loss.avg:.5f})\t' \
+                  'Accuracy {accuracy.val:.3f} ({accuracy.avg:.3f})\t'.format(
+                      epoch, i, len(train_loader), batch_time=batch_time,
+                      speed=model_input.size(0)/batch_time.val,
+                      data_time=data_time, loss=losses, accuracy=accuracy)
+            logger.info(msg)
+
+            if writer_dict:
+                writer = writer_dict['writer']
+                global_steps = writer_dict['train_global_steps']
+                writer.add_scalar('train_loss', losses.val, global_steps)
+                writer.add_scalar('accuracy', accuracy.val, global_steps)
+                writer_dict['train_global_steps'] = global_steps + 1
+
+        if (i + 1) % config.SAVE_FREQ == 0:
+            logger.info('=> saving checkpoint to {}'.format(output_dir))
+            save_checkpoint({
+                'epoch': epoch,
+                'model': config.MODEL.NAME,
+                'state_dict': model_student.module.state_dict(),
+                'perf': 0,
+                'optimizer': optimizer.state_dict(),
+            }, False, output_dir, filename='mini_checkpoint.pth.tar')
+
+
 class AverageMeter(object):
     """Computes and stores the average and current value"""
     def __init__(self):

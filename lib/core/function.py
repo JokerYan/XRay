@@ -344,6 +344,10 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         optimizer.zero_grad()
         loss.backward()
         print(model_input_teacher.grad.data)
+        model_input_neighbour = get_input_neighbour(model_input_teacher, model_input_teacher.grad.data)
+        clear_debug_image()
+        save_image_stack(model_input_teacher, 'teacher input', 3)
+        save_image_stack(model_input_neighbour, 'neighbour input', 3)
         optimizer.step()
 
         # measure accuracy and record loss
@@ -365,7 +369,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
                   'Loss {loss.val:.5f} ({loss.avg:.5f})\t' \
                   'Accuracy {accuracy.val:.3f} ({accuracy.avg:.3f})\t'.format(
                       epoch, i, len(train_loader), batch_time=batch_time,
-                      speed=model_input.size(0)/batch_time.val,
+                      speed=model_input_teacher.size(0)/batch_time.val,
                       data_time=data_time, loss=losses, accuracy=accuracy)
             logger.info(msg)
 
@@ -385,6 +389,12 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
                 'perf': 0,
                 'optimizer': optimizer.state_dict(),
             }, False, output_dir, filename='mini_checkpoint.pth.tar')
+
+
+def get_input_neighbour(input_data, grad):
+    scale = 100
+    input_neighbour = input_data + grad * scale
+    return input_neighbour
 
 
 class AverageMeter(object):

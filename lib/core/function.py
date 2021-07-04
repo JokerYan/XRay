@@ -402,7 +402,7 @@ def get_input_neighbour(input_data, grad):
 
     # grad mean same shape as input batch, but calculate per input
     grad_per_input = grad.reshape(batch_size, -1)
-    grad_mean = torch.mean(grad_per_input, dim=1)
+    grad_mean = torch.mean(torch.abs(grad_per_input), dim=1)
     grad_mean = grad_mean.reshape(batch_size, 1, 1, 1).expand(grad.shape)
 
     displacement = grad * target_mean / grad_mean

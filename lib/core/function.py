@@ -398,7 +398,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
 
 def get_input_neighbour(input_data, grad):
     target_mean = 0.0005
-    print(torch.mean(grad, dim=1))
+    print(torch.mean(grad, dim=1).shape)
     displacement = grad * target_mean / torch.mean(grad, dim=1, keepdim=True)
     input_neighbour = input_data - displacement
     return input_neighbour

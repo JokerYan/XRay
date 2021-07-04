@@ -330,7 +330,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
 
         # compute output
         target_x, target_c = model_teacher(model_input_teacher)
-        output_x, output_c = model_student(model_input_teacher)
+        output_x, output_c = model_student(model_input_student)
 
         target_x = target_x.cuda(non_blocking=True)
         target_c = target_c.cuda(non_blocking=True)

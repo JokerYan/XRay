@@ -400,7 +400,7 @@ def get_input_neighbour(input_data, grad):
     scale = 10000
     cap = 0.1
     displacement = torch.clip(grad * scale, cap * -1, cap)
-    input_neighbour = input_data + displacement
+    input_neighbour = input_data - displacement
     return input_neighbour
 
 

@@ -329,7 +329,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         #target = target - 1 # Specific for imagenet
 
         # compute output
-        teacher_x, teacher_c = model_teacher(model_input_student)
+        teacher_x, teacher_c = model_teacher(model_input_teacher)
 
         torch.sum(teacher_c).backward()
         # print(model_input_teacher.grad.data)

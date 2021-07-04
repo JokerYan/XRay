@@ -319,7 +319,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
     end = time.time()
     for i, data in enumerate(train_loader):
         model_input_teacher = data['video_frame']
-        model_input_student = model_input_teacher.detach().clone()
+        # model_input_student = model_input_teacher.detach().clone()
         model_input_teacher.requires_grad = True
         # target_x = data['mask_frame']
         # target_c = data['is_fake']
@@ -330,7 +330,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
 
         # compute output
         target_x, target_c = model_teacher(model_input_teacher)
-        output_x, output_c = model_student(model_input_student)
+        output_x, output_c = model_student(model_input_teacher)
 
         target_x = target_x.cuda(non_blocking=True)
         target_c = target_c.cuda(non_blocking=True)

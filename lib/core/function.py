@@ -318,33 +318,32 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
 
     end = time.time()
     for i, data in enumerate(train_loader):
-        model_input_teacher = data['video_frame']
-        model_input_teacher.requires_grad = True
-        model_input_student = model_input_teacher.detach().clone()
-        target_x = data['mask_frame']
-        target_c = data['is_fake']
+        model_input = data['video_frame']
+        model_input.requires_grad = True
+        # target_x = data['mask_frame']
+        # target_c = data['is_fake']
 
         # measure data loading time
         data_time.update(time.time() - end)
         #target = target - 1 # Specific for imagenet
 
         # compute output
-        teacher_x, teacher_c = model_teacher(model_input_teacher)
+        teacher_x, teacher_c = model_teacher(model_input)
 
         torch.sum(teacher_c).backward()
         # print(model_input_teacher.grad.data)
-        model_input_neighbour = get_input_neighbour(model_input_teacher, model_input_teacher.grad.data)
+        model_input_neighbour = get_input_neighbour(model_input, model_input.grad.data)
         neighbour_x, neighbour_c = model_teacher(model_input_neighbour)
+        teacher_ratio = 0.5
+        mix_x = teacher_ratio * teacher_x + (1 - teacher_ratio) * neighbour_x
         clear_debug_image()
-        save_image_stack(model_input_teacher, 'teacher input', 10, normalized=True)
+        save_image_stack(model_input, 'teacher input', 10, normalized=True)
         save_image_stack(model_input_neighbour, 'neighbour input', 10, normalized=True)
         save_image_stack(teacher_x, 'teacher output', 10)
         save_image_stack(neighbour_x, 'neighbour output', 10)
+        save_image_stack(mix_x, 'mix output', 10)
 
-        output_x, output_c = model_student(model_input_teacher)
-
-        teacher_x = teacher_x.cuda(non_blocking=True)
-        teacher_c = teacher_c.cuda(non_blocking=True)
+        output_x, output_c = model_student(model_input)
 
         loss1 = criterion1(output_x, teacher_x.detach())
         loss2 = criterion2(output_c, teacher_c.detach())
@@ -356,7 +355,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         optimizer.step()
 
         # measure accuracy and record loss
-        losses.update(loss.item(), model_input_teacher.size(0))
+        losses.update(loss.item(), model_input.size(0))
 
         # evaluation
         acc = cal_accuracy(output_c, teacher_c)
@@ -374,7 +373,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
                   'Loss {loss.val:.5f} ({loss.avg:.5f})\t' \
                   'Accuracy {accuracy.val:.3f} ({accuracy.avg:.3f})\t'.format(
                       epoch, i, len(train_loader), batch_time=batch_time,
-                      speed=model_input_teacher.size(0)/batch_time.val,
+                      speed=model_input.size(0)/batch_time.val,
                       data_time=data_time, loss=losses, accuracy=accuracy)
             logger.info(msg)
 

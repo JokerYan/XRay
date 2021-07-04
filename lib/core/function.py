@@ -339,7 +339,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         save_image_stack(model_input_teacher, 'teacher input', 5, normalized=True)
         save_image_stack(model_input_neighbour, 'neighbour input', 5, normalized=True)
         save_image_stack(teacher_x, 'teacher output', 5)
-        save_image_stack(neighbour_x, 'model output', 5)
+        save_image_stack(neighbour_x, 'neighbour output', 5)
 
         output_x, output_c = model_student(model_input_teacher)
 

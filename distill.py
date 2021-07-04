@@ -145,7 +145,7 @@ def main():
         transforms.Compose([
             custom_transforms.ImageToOne(),
             custom_transforms.MaskToXray(),
-            custom_transforms.ToTensor(cuda=True),
+            custom_transforms.ToTensor(cuda=False),
             custom_transforms.ColorJitter(),
             custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),
             custom_transforms.RandomCrop(config.MODEL.IMAGE_SIZE[0]),

@@ -331,6 +331,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         # compute output
         target_x, target_c = model_teacher(model_input_teacher)
 
+        target_x.backward()
         print(model_input_teacher.grad.data)
         model_input_neighbour = get_input_neighbour(model_input_teacher, model_input_teacher.grad.data)
         clear_debug_image()

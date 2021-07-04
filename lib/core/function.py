@@ -399,11 +399,13 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
 def get_input_neighbour(input_data, grad):
     target_mean = 0.0005
     batch_size = grad.shape[0]
+
+    # grad mean same shape as input batch, but calculate per input
     grad_per_input = grad.reshape(batch_size, -1)
     grad_mean = torch.mean(grad_per_input, dim=1)
     grad_mean = grad_mean.reshape(batch_size, 1, 1, 1).expand(grad.shape)
-    print(grad_mean)
-    displacement = grad * target_mean / torch.mean(grad, dim=1, keepdim=True)
+
+    displacement = grad * target_mean / grad_mean
     input_neighbour = input_data - displacement
     return input_neighbour
 

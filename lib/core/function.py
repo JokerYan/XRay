@@ -321,31 +321,32 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         model_input_teacher = data['video_frame']
         model_input_teacher.requires_grad = True
         model_input_student = model_input_teacher.detach().clone()
-        # target_x = data['mask_frame']
-        # target_c = data['is_fake']
+        target_x = data['mask_frame']
+        target_c = data['is_fake']
 
         # measure data loading time
         data_time.update(time.time() - end)
         #target = target - 1 # Specific for imagenet
 
         # compute output
-        target_x, target_c = model_teacher(model_input_teacher)
+        teacher_x, teacher_c = model_teacher(model_input_student)
 
-        torch.sum(target_c).backward()
+        torch.sum(teacher_c).backward()
         # print(model_input_teacher.grad.data)
         model_input_neighbour = get_input_neighbour(model_input_teacher, model_input_teacher.grad.data)
         clear_debug_image()
-        print(target_c)
         save_image_stack(model_input_teacher, 'teacher input', 3, normalized=True)
         save_image_stack(model_input_neighbour, 'neighbour input', 3, normalized=True)
+        save_image_stack(teacher_x, 'neighbour input', 3)
+        save_image_stack(target_x, 'neighbour input', 3)
 
         output_x, output_c = model_student(model_input_teacher)
 
-        target_x = target_x.cuda(non_blocking=True)
-        target_c = target_c.cuda(non_blocking=True)
+        teacher_x = teacher_x.cuda(non_blocking=True)
+        teacher_c = teacher_c.cuda(non_blocking=True)
 
-        loss1 = criterion1(output_x, target_x.detach())
-        loss2 = criterion2(output_c, target_c.detach())
+        loss1 = criterion1(output_x, teacher_x.detach())
+        loss2 = criterion2(output_c, teacher_c.detach())
         loss = loss1 * 100 + loss2
 
         # compute gradient and do update step
@@ -357,7 +358,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         losses.update(loss.item(), model_input_teacher.size(0))
 
         # evaluation
-        acc = cal_accuracy(output_c, target_c)
+        acc = cal_accuracy(output_c, teacher_c)
         accuracy.update(acc)
 
         # measure elapsed time

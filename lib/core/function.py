@@ -345,8 +345,8 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         print(model_input_teacher.grad.data)
         model_input_neighbour = get_input_neighbour(model_input_teacher, model_input_teacher.grad.data)
         clear_debug_image()
-        save_image_stack(model_input_teacher, 'teacher input', 3)
-        save_image_stack(model_input_neighbour, 'neighbour input', 3)
+        save_image_stack(model_input_teacher, 'teacher input', 3, normalized=True)
+        save_image_stack(model_input_neighbour, 'neighbour input', 3, normalized=True)
         optimizer.step()
 
         # measure accuracy and record loss

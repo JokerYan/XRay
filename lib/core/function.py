@@ -335,10 +335,10 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         # print(model_input_teacher.grad.data)
         model_input_neighbour = get_input_neighbour(model_input_teacher, model_input_teacher.grad.data)
         clear_debug_image()
-        save_image_stack(model_input_teacher, 'teacher input', 3, normalized=True)
-        save_image_stack(model_input_neighbour, 'neighbour input', 3, normalized=True)
-        save_image_stack(teacher_x, 'teacher output', 3)
-        save_image_stack(target_x, 'target output', 3)
+        save_image_stack(model_input_teacher, 'teacher input', 5, normalized=True)
+        save_image_stack(model_input_neighbour, 'neighbour input', 5, normalized=True)
+        save_image_stack(teacher_x, 'teacher output', 5)
+        save_image_stack(target_x, 'target output', 5)
 
         output_x, output_c = model_student(model_input_teacher)
 

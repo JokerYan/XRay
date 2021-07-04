@@ -398,7 +398,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
 
 def get_input_neighbour(input_data, grad):
     scale = 10000
-    cap = 0.05
+    cap = 0.1
     displacement = torch.clip(grad * scale, cap * -1, cap)
     input_neighbour = input_data - displacement
     return input_neighbour

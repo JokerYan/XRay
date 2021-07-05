@@ -335,21 +335,20 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
 
         # print(model_input_teacher.grad.data)
         model_input_neighbour = get_input_neighbour(model_input, model_input.grad.data)
-        get_global_timer().start_timer()
         neighbour_x, neighbour_c = model_teacher(model_input_neighbour)
-        get_global_timer().stop_timer()
         teacher_ratio = 0.5
         mix_x = teacher_ratio * teacher_x + (1 - teacher_ratio) * neighbour_x
 
-        if (i + 1) % 100 == 0:
-            clear_debug_image()
-            save_image_stack(model_input, 'teacher input', 10, normalized=True)
-            save_image_stack(model_input_neighbour, 'neighbour input', 10, normalized=True)
-            save_image_stack(teacher_x, 'teacher output', 10)
-            save_image_stack(neighbour_x, 'neighbour output', 10)
-            save_image_stack(mix_x, 'mix output', 10)
+        # if (i + 1) % 100 == 0:
+        #     clear_debug_image()
+        #     save_image_stack(model_input, 'teacher input', 10, normalized=True)
+        #     save_image_stack(model_input_neighbour, 'neighbour input', 10, normalized=True)
+        #     save_image_stack(teacher_x, 'teacher output', 10)
+        #     save_image_stack(neighbour_x, 'neighbour output', 10)
+        #     save_image_stack(mix_x, 'mix output', 10)
 
         # normal input
+        model_input.requires_grad = False
         output_x, output_c = model_student(model_input)
         loss1 = criterion1(output_x, teacher_x.detach())
         loss2 = criterion2(output_c, teacher_c.detach())

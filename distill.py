@@ -181,6 +181,14 @@ def main():
     )
     get_global_timer().set_batch_size(config.TRAIN.BATCH_SIZE_PER_GPU*len(gpus))
 
+    get_global_timer().start_timer()
+    for i, data in enumerate(train_loader):
+        get_global_timer().stop_timer()
+        get_global_timer().start_timer()
+        if i == 99:
+            break
+    print(get_global_timer().get_string())
+
     # valid_loader = torch.utils.data.DataLoader(
     #     datasets.ImageFolder(valdir, transforms.Compose([
     #         transforms.Resize(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),

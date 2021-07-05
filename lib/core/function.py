@@ -236,7 +236,6 @@ def distill(config, train_loader, model_teacher, model_student, criterion1, crit
 
         # compute output
         target_x, target_c = model_teacher(model_input)
-        get_global_timer().start_timer()
         output_x, output_c = model_student(model_input)
 
         target_x = target_x.cuda(non_blocking=True)
@@ -266,7 +265,6 @@ def distill(config, train_loader, model_teacher, model_student, criterion1, crit
         # evaluation
         acc = cal_accuracy(output_c, target_c)
         accuracy.update(acc)
-        get_global_timer().stop_timer()
 
         # measure elapsed time
         batch_time.update(time.time() - end)

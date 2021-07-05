@@ -177,6 +177,7 @@ def main():
         batch_size=config.TRAIN.BATCH_SIZE_PER_GPU*len(gpus),
         shuffle=True,
         num_workers=config.WORKERS,
+        persistent_workers=True,
         pin_memory=True
     )
     get_global_timer().set_batch_size(config.TRAIN.BATCH_SIZE_PER_GPU*len(gpus))
@@ -217,7 +218,7 @@ def main():
 
     for epoch in range(last_epoch, config.TRAIN.END_EPOCH):
         # train for one epoch
-        distill(config, train_loader, model_teacher, model_student, criterion1, criterion2, optimizer, epoch,
+        smooth_distill(config, train_loader, model_teacher, model_student, criterion1, criterion2, optimizer, epoch,
               final_output_dir, tb_log_dir, writer_dict)
         lr_scheduler.step()
         # evaluate on validation set

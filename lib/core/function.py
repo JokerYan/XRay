@@ -348,7 +348,6 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         #     save_image_stack(mix_x, 'mix output', 10)
 
         # normal input
-        get_global_timer().start_timer()
         model_input.requires_grad = False
         output_x, output_c = model_student(model_input)
         loss1 = criterion1(output_x, teacher_x.detach())
@@ -360,9 +359,9 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         losses.update(loss.item(), model_input.size(0))
         acc = cal_accuracy(output_c, teacher_c)
         accuracy.update(acc)
-        get_global_timer().stop_timer()
 
         # neighbour input
+        get_global_timer().start_timer()
         output_x, output_c = model_student(model_input)
         loss1 = criterion1(output_x, mix_x.detach())
         loss2 = criterion2(output_c, teacher_c.detach())
@@ -373,6 +372,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         losses.update(loss.item(), model_input.size(0))
         acc = cal_accuracy(output_c, teacher_c)
         accuracy.update(acc)
+        get_global_timer().stop_timer()
 
         # measure elapsed time
         batch_time.update(time.time() - end)

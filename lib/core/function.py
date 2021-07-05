@@ -331,17 +331,15 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         # compute output
         teacher_x, teacher_c = model_teacher(model_input)
 
-        get_global_timer().start_timer()
-
         torch.sum(teacher_c).backward()
-        get_global_timer().stop_timer()
 
         # print(model_input_teacher.grad.data)
         model_input_neighbour = get_input_neighbour(model_input, model_input.grad.data)
+        get_global_timer().start_timer()
         neighbour_x, neighbour_c = model_teacher(model_input_neighbour)
+        get_global_timer().stop_timer()
         teacher_ratio = 0.5
         mix_x = teacher_ratio * teacher_x + (1 - teacher_ratio) * neighbour_x
-
 
         if (i + 1) % 100 == 0:
             clear_debug_image()

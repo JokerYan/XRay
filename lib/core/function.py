@@ -331,7 +331,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         # compute output
         teacher_x, teacher_c = model_teacher(model_input)
 
-        get_global_timer().stop_timer()
+        get_global_timer().start_timer()
 
         torch.sum(teacher_c).backward()
         # print(model_input_teacher.grad.data)

@@ -60,6 +60,3 @@ global_timer = Timer()
 
 def get_global_timer():
     return global_timer
-
-def set_global_timer_batch_size(batch_size):
-    global_timer.set_batch_size(batch_size)

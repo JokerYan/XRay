@@ -18,6 +18,7 @@ import numpy as np
 from lib.core.evaluate import cal_accuracy, cal_roc_auc
 from lib.utils.utils import save_checkpoint
 from utils.debug_tools import save_image, save_image_stack, clear_debug_image
+from utils.timer import get_global_timer
 
 logger = logging.getLogger(__name__)
 
@@ -374,6 +375,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         end = time.time()
 
         if i % config.PRINT_FREQ == 0:
+            logger.info(get_global_timer().get_string())
             msg = 'Epoch: [{0}][{1}/{2}]\t' \
                   'Time {batch_time.val:.3f}s ({batch_time.avg:.3f}s)\t' \
                   'Speed {speed:.1f} samples/s\t' \
@@ -404,6 +406,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
 
 
 def get_input_neighbour(input_data, grad):
+    get_global_timer().start_timer()
     target_mean = 0.002
     batch_size = grad.shape[0]
 
@@ -415,6 +418,7 @@ def get_input_neighbour(input_data, grad):
 
     displacement = grad * target_mean / grad_mean
     input_neighbour = input_data - displacement
+    get_global_timer().stop_timer()
     return input_neighbour
 
 

@@ -40,6 +40,7 @@ import lib.models.cls_hrnet as cls_hrnet
 from lib.models.xray_net import XRayNet
 import utils.image_transforms as custom_transforms
 from utils.model_loader import Args, construct_model
+from utils.timer import get_global_timer
 from utils.xray_dataset import XRayDataset
 
 from lib.config import config
@@ -176,6 +177,7 @@ def main():
         num_workers=config.WORKERS,
         pin_memory=True
     )
+    get_global_timer().set_batch_size(config.TRAIN.BATCH_SIZE_PER_GPU*len(gpus))
 
     # valid_loader = torch.utils.data.DataLoader(
     #     datasets.ImageFolder(valdir, transforms.Compose([

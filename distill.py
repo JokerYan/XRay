@@ -71,6 +71,8 @@ def main():
         logger.info('=> loading model from {}'.format(config.TEST.MODEL_FILE))
         # model.load_state_dict(torch.load(config.TEST.MODEL_FILE))
         model_teacher.load_hrnet_pretrained(torch.load(config.TEST.MODEL_FILE))
+        for p in model_teacher.parameters():
+            p.requires_grad = False
         model_student.load_hrnet_pretrained(torch.load(config.TEST.MODEL_FILE))
 
     # copy model file

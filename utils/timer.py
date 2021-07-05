@@ -7,6 +7,7 @@ class Timer:
         self.batch_size = batch_size
         self.total_time = 0
         self.total_sample = 0
+        self.total_round = 0
         self.last_start_time = None
         self.last_round_time = 0  # used to calculate only the last epoch/round time used
 
@@ -22,6 +23,7 @@ class Timer:
         self.last_round_time = time.time() - self.last_start_time
         self.total_time += self.last_round_time
         self.total_sample += self.batch_size
+        self.total_round += 1
         self.last_start_time = None
 
     def clear_timer(self):
@@ -29,30 +31,37 @@ class Timer:
         self.total_sample = 0
         self.last_start_time = None
         self.last_round_time = 0
+        self.total_round = 0
 
-    def get_average_time(self):
+    def get_time_per_sample(self):
         if self.total_time == 0:
             return 0
         return self.total_time / self.total_sample
 
-    def get_average_speed(self):
+    def get_time_per_round(self):
+        if self.total_time == 0:
+            return 0
+        return self.total_time / self.total_round
+
+    def get_speed_per_second(self):
         if self.total_sample == 0:
             return 0
         return self.total_sample / self.total_time
 
-    def get_last_round_time(self):
+    def get_last_round_time_per_sample(self):
         return self.last_round_time / self.batch_size
 
-    def get_last_round_speed(self):
+    def get_last_round_speed_per_second(self):
         if self.last_round_time == 0:
             return 0
         return self.batch_size / self.last_round_time
 
     def get_string(self):
-        return "Timer ==> Time Used: {}s\t\tSpeed: {} ({}) sample/s".format(
-            self.total_time,
-            self.get_average_speed(),
-            self.get_last_round_speed(),
+        return "Timer ==> Time Used: {}s ({}s)\t\tSpeed: {} ({}) sample/s".format(
+            self.last_round_time,
+            self.get_time_per_round(),
+            self.get_last_round_speed_per_second(),
+            self.get_speed_per_second(),
         )
 
 

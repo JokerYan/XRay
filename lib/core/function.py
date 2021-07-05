@@ -320,6 +320,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
 
     end = time.time()
     for i, data in enumerate(train_loader):
+        get_global_timer().start_timer()
         model_input = data['video_frame']
         model_input.requires_grad = True
         # target_x = data['mask_frame']
@@ -377,6 +378,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         batch_time.update(time.time() - end)
         end = time.time()
 
+        get_global_timer().stop_timer()
         if i % config.PRINT_FREQ == 0:
             logger.info(get_global_timer().get_string())
             msg = 'Epoch: [{0}][{1}/{2}]\t' \

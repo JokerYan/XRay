@@ -68,6 +68,8 @@ def main():
     best_acc_list = []
     best_delta_list = []
     for i, data in enumerate(valid_loader):
+        if i == 100:
+            break
         input = data['video_frame']
         target_x = data['mask_frame']
         target_c = data['is_fake']

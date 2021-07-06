@@ -177,7 +177,6 @@ def main():
         batch_size=config.TRAIN.BATCH_SIZE_PER_GPU*len(gpus),
         shuffle=True,
         num_workers=config.WORKERS,
-        persistent_workers=True,
         pin_memory=True
     )
     get_global_timer().set_batch_size(config.TRAIN.BATCH_SIZE_PER_GPU*len(gpus))

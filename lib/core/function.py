@@ -421,6 +421,7 @@ def get_input_neighbour(input_data, grad):
     grad_mean = grad_mean.reshape(batch_size, 1, 1, 1).expand(grad.shape)
 
     displacement = grad * target_mean / grad_mean
+    displacement = grad * 300
     input_neighbour = input_data - displacement
     return input_neighbour
 

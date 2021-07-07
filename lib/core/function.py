@@ -366,13 +366,13 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         acc = cal_accuracy(output_c, teacher_c)
         accuracy.update(acc)
 
-        clear_debug_image()
-        save_image_stack(model_input, 'teacher input', 10, normalized=True)
-        save_image_stack(model_input_neighbour, 'neighbour input', 10, normalized=True)
-        save_image_stack(teacher_x, 'teacher output', 10)
-        save_image_stack(neighbour_x, 'teacher neighbour output', 10)
-        save_image_stack(mix_x, 'mix output', 10)
-        # save_image_stack(output_x, "student neighbour output", 10)
+        # clear_debug_image()
+        # save_image_stack(model_input, 'teacher input', 10, normalized=True)
+        # save_image_stack(model_input_neighbour, 'neighbour input', 10, normalized=True)
+        # save_image_stack(teacher_x, 'teacher output', 10)
+        # save_image_stack(neighbour_x, 'teacher neighbour output', 10)
+        # save_image_stack(mix_x, 'mix output', 10)
+        # # save_image_stack(output_x, "student neighbour output", 10)
 
         # measure elapsed time
         batch_time.update(time.time() - end)
@@ -411,16 +411,16 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
 
 
 def get_input_neighbour(input_data, grad):
-    target_mean = 0.01
-    batch_size = grad.shape[0]
-
-    # grad mean calculated based on absolute value
-    # grad mean same shape as input batch, but calculate per input
-    grad_per_input = grad.reshape(batch_size, -1)
-    grad_mean = torch.mean(torch.abs(grad_per_input), dim=1)
-    grad_mean = grad_mean.reshape(batch_size, 1, 1, 1).expand(grad.shape)
-
-    displacement = grad * target_mean / grad_mean
+    # target_mean = 0.01
+    # batch_size = grad.shape[0]
+    #
+    # # grad mean calculated based on absolute value
+    # # grad mean same shape as input batch, but calculate per input
+    # grad_per_input = grad.reshape(batch_size, -1)
+    # grad_mean = torch.mean(torch.abs(grad_per_input), dim=1)
+    # grad_mean = grad_mean.reshape(batch_size, 1, 1, 1).expand(grad.shape)
+    #
+    # displacement = grad * target_mean / grad_mean
     displacement = grad * input_data
     input_neighbour = input_data - displacement
     return input_neighbour

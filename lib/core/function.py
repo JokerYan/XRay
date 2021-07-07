@@ -420,7 +420,7 @@ def get_input_neighbour(input_data, grad):
     grad_mean = torch.mean(torch.abs(grad_per_input), dim=1)
     grad_mean = grad_mean.reshape(batch_size, 1, 1, 1).expand(grad.shape)
 
-    print(target_mean / grad_mean)
+    print(torch.mean(target_mean / grad_mean, dim=0))
     displacement = grad * target_mean / grad_mean
     input_neighbour = input_data - displacement
     return input_neighbour

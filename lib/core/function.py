@@ -410,7 +410,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
 
 
 def get_input_neighbour(input_data, grad):
-    target_mean = 0.002
+    target_mean = 0.005
     batch_size = grad.shape[0]
 
     # grad mean calculated based on absolute value

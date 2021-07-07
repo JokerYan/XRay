@@ -414,6 +414,8 @@ def get_input_neighbour(input_data, grad):
     target_mean = 0.005
     batch_size = grad.shape[0]
 
+    print(torch.mean(grad))
+
     # grad mean calculated based on absolute value
     # grad mean same shape as input batch, but calculate per input
     grad_per_input = grad.reshape(batch_size, -1)

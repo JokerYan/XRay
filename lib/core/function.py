@@ -341,13 +341,6 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         teacher_ratio = 0.5
         mix_x = teacher_ratio * teacher_x + (1 - teacher_ratio) * neighbour_x
 
-        clear_debug_image()
-        # save_image_stack(model_input, 'teacher input', 10, normalized=True)
-        save_image_stack(model_input_neighbour, 'neighbour input', 10, normalized=True)
-        # save_image_stack(teacher_x, 'teacher output', 10)
-        save_image_stack(neighbour_x, 'teacher neighbour output', 10)
-        # save_image_stack(mix_x, 'mix output', 10)
-
         # normal input
         model_input.requires_grad = False
         output_x, output_c = model_student(model_input)
@@ -361,20 +354,24 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         acc = cal_accuracy(output_c, teacher_c)
         accuracy.update(acc)
 
-        save_image_stack(output_x, "student output", 10)
-
         # neighbour input
-        output_x, output_c = model_student(model_input)
+        output_x, output_c = model_student(model_input_neighbour)
         loss1 = criterion1(output_x, mix_x.detach())
         loss2 = criterion2(output_c, teacher_c.detach())
         loss = loss1 * 100 + loss2
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        losses.update(loss.item(), model_input.size(0))
+        losses.update(loss.item(), model_input_neighbour.size(0))
         acc = cal_accuracy(output_c, teacher_c)
         accuracy.update(acc)
 
+        clear_debug_image()
+        # save_image_stack(model_input, 'teacher input', 10, normalized=True)
+        save_image_stack(model_input_neighbour, 'neighbour input', 10, normalized=True)
+        # save_image_stack(teacher_x, 'teacher output', 10)
+        save_image_stack(neighbour_x, 'teacher neighbour output', 10)
+        # save_image_stack(mix_x, 'mix output', 10)
         save_image_stack(output_x, "student neighbour output", 10)
 
         # measure elapsed time

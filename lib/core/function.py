@@ -412,7 +412,6 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
 def get_input_neighbour(input_data, grad):
     target_mean = 0.005
     grad = grad / torch.abs(grad)  # cal sign
-    print(grad)
     batch_size = grad.shape[0]
 
     # grad mean calculated based on absolute value
@@ -422,6 +421,7 @@ def get_input_neighbour(input_data, grad):
     grad_mean = grad_mean.reshape(batch_size, 1, 1, 1).expand(grad.shape)
 
     displacement = grad * target_mean / grad_mean
+    print(displacement)
     input_neighbour = input_data - displacement
     return input_neighbour
 

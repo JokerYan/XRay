@@ -37,6 +37,7 @@ class CWInfAttack(nn.Module):
 
         tau = 1
 
+        original_output = None
         best_adv_images = images.clone().detach()
         best_output_x = None
         best_acc = 0
@@ -47,6 +48,8 @@ class CWInfAttack(nn.Module):
         for step in range(self.steps):
             adv_images = self.w_to_adv_images(w)
             output_x, output_c = self.model(self.Normalize(adv_images))
+            if original_output is None:
+                original_output = output_x
 
             f_value = self.c * self.get_f_value(output_c)
             delta = self.w_to_delta(w, images)
@@ -80,11 +83,11 @@ class CWInfAttack(nn.Module):
                 break
         print('Batch finished: Acc: {}\tDelta: {}'.format(best_acc, best_delta))
         pickle.dump(best_adv_images, open('adv_images_batch.pkl', 'wb'))
-
         clear_debug_image()
-        save_image_stack(images, 'input', max_count=5)
-        save_image_stack(best_adv_images, 'attack', max_count=5)
-        save_image_stack(best_output_x, 'output', max_count=5)
+        save_image_stack(images, 'original input')
+        save_image_stack(best_adv_images, 'adversarial input')
+        save_image_stack(original_output, 'original output')
+        save_image_stack(best_output_x, 'adversarial output')
 
         return best_adv_images, best_acc, best_delta
 

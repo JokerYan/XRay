@@ -53,21 +53,21 @@ def main():
     )
     logger.info(get_model_summary(model, dump_input))
 
-    if config.TEST.MODEL_FILE:
-        logger.info('=> loading model from {}'.format(config.TEST.MODEL_FILE))
-        # model.load_state_dict(torch.load(config.TEST.MODEL_FILE))
-        model.load_hrnet_pretrained(torch.load(config.TEST.MODEL_FILE))
+    # if config.TEST.MODEL_FILE:
+    #     logger.info('=> loading model from {}'.format(config.TEST.MODEL_FILE))
+    #     # model.load_state_dict(torch.load(config.TEST.MODEL_FILE))
+    #     model.load_hrnet_pretrained(torch.load(config.TEST.MODEL_FILE))
+    # else:
+    #     # model_state_file = os.path.join(final_output_dir,
+    #     #                                 'final_state.pth.tar')
+    model_state_file = os.path.join(final_output_dir,
+                                    'model_best.pth.tar')
+    logger.info('=> loading model from {}'.format(model_state_file))
+    model_state = torch.load(model_state_file)
+    if 'state_dict' in model_state:
+        model.load_state_dict(model_state['state_dict'])
     else:
-        # model_state_file = os.path.join(final_output_dir,
-        #                                 'final_state.pth.tar')
-        model_state_file = os.path.join(final_output_dir,
-                                        'model_best.pth.tar')
-        logger.info('=> loading model from {}'.format(model_state_file))
-        model_state = torch.load(model_state_file)
-        if 'state_dict' in model_state:
-            model.load_state_dict(model_state['state_dict'])
-        else:
-            model.load_state_dict(model_state)
+        model.load_state_dict(model_state)
 
     gpus = list(config.GPUS)
     model = torch.nn.DataParallel(model, device_ids=gpus).cuda()

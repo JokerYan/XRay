@@ -20,6 +20,7 @@ def construct_model(cfg_path, pretrained_model):
     args.cfg = cfg_path
     args.testModel = pretrained_model
     update_config(config, args)
+    config.GPUS = [torch.cuda.device(i) for i in range(torch.cuda.device_count())]
     model = XRayNet(config)
 
     # cudnn related setting

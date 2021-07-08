@@ -61,7 +61,7 @@ def main():
         # model_state_file = os.path.join(final_output_dir,
         #                                 'final_state.pth.tar')
         model_state_file = os.path.join(final_output_dir,
-                                        'checkpoint.pth.tar')
+                                        'model_best.pth.tar')
         logger.info('=> loading model from {}'.format(model_state_file))
         model_state = torch.load(model_state_file)
         if 'state_dict' in model_state:

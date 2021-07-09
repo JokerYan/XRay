@@ -14,8 +14,8 @@ config_path = 'experiments/cw_inf_att.json'
 # to change target model, both the 'model_path' in the above config
 # and 'args.cfg' path in parse_args()
 
-cfg_path = 'experiments/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
-pretrained_model = 'hrnetv2_w64_imagenet_pretrained.pth'
+cfg_path = 'experiments/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
+pretrained_model = 'hrnetv2_w18_imagenet_pretrained.pth'
 
 def load_target_model(model_path):
     model, args, target_config = construct_model(cfg_path, pretrained_model)
@@ -41,7 +41,7 @@ def main():
     # image normalized right before passing to model
     # original image needed for attack
     valid_dataset = XRayDataset(
-        './data/val_image_selected.csv',
+        './data/train_image_selected.csv',
         # normalized transform removed because it is called separately in attack model
         transforms.Compose([
              # TODO: Change Random Crop to Centre Crop

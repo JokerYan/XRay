@@ -41,7 +41,7 @@ def main():
     # image normalized right before passing to model
     # original image needed for attack
     valid_dataset = XRayDataset(
-        './data/train_image_selected.csv',
+        './data/val_image_selected.csv',
         # normalized transform removed because it is called separately in attack model
         transforms.Compose([
              # TODO: Change Random Crop to Centre Crop

@@ -433,7 +433,7 @@ def adv_finetune(config, train_loader, model, criterion1, criterion2, optimizer,
         model_input.requires_grad = False
 
         # target_x = target_x.cuda(non_blocking=True)
-        # target_c = target_c.cuda(non_blocking=True)
+        target_c = target_c.cuda(non_blocking=True)
 
         loss1 = criterion1(output_x, output_x_neighbour)
         loss2 = criterion2(output_c, output_c_neighbour)

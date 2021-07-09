@@ -39,7 +39,7 @@ from lib.utils.utils import get_optimizer, save_checkpoint, create_logger
 
 cfg_path = 'experiments/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux_adv.yaml'
 pretrained_model = 'hrnetv2_w18_imagenet_pretrained.pth'
-base_model = "./output/ILSVRC/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux_exp05/model_best.pth.tar"
+base_model_path = "./output/ILSVRC/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux_exp05/model_best.pth.tar"
 
 
 def main():
@@ -99,13 +99,14 @@ def main():
             logger.info("=> loaded checkpoint (epoch {})"
                         .format(checkpoint['epoch']))
         else:  # load initial model trained before
-            assert os.path.isfile(base_model)
-            checkpoint = torch.load(base_model)
+            assert os.path.isfile(base_model_path)
+            model_state = torch.load(base_model_path)
             last_epoch = 0
-            model.module.load_state_dict(checkpoint['state_dict'])
-            optimizer.load_state_dict(checkpoint['optimizer'])
-            logger.info("=> loaded base model (epoch {})"
-                        .format(checkpoint['epoch']))
+            if 'state_dict' in model_state:
+                model.load_state_dict(model_state['state_dict'])
+            else:
+                model.load_state_dict(model_state)
+            logger.info("=> loaded base model: {}".format(base_model_path))
 
     if isinstance(config.TRAIN.LR_STEP, list):
         lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(

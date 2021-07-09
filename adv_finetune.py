@@ -100,7 +100,7 @@ def main():
                         .format(checkpoint['epoch']))
         else:  # load initial model trained before
             assert os.path.isfile(base_model)
-            checkpoint = torch.load(model_state_file)
+            checkpoint = torch.load(base_model)
             last_epoch = 0
             best_perf = checkpoint['perf']
             model.module.load_state_dict(checkpoint['state_dict'])

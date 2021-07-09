@@ -102,7 +102,6 @@ def main():
             assert os.path.isfile(base_model)
             checkpoint = torch.load(base_model)
             last_epoch = 0
-            best_perf = checkpoint['perf']
             model.module.load_state_dict(checkpoint['state_dict'])
             optimizer.load_state_dict(checkpoint['optimizer'])
             logger.info("=> loaded base model (epoch {})"

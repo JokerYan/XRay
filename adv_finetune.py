@@ -76,8 +76,8 @@ def main():
 
     # define loss function (criterion) and optimizer
     # criterion = torch.nn.CrossEntropyLoss().cuda()
-    criterion1 = torch.nn.BCELoss().cuda()
-    criterion2 = torch.nn.BCELoss().cuda()
+    criterion1 = torch.nn.MSELoss().cuda()
+    criterion2 = torch.nn.MSELoss().cuda()
 
     optimizer = get_optimizer(config, model)
 

@@ -427,7 +427,7 @@ def adv_finetune(config, train_loader, model, criterion1, criterion2, optimizer,
         output_x, output_c = model(model_input)
 
         # infer adv neighbour
-        torch.sum(output_x).backward()
+        torch.sum(output_x).backward(retain_graph=True)
         model_input_neighbour = get_input_neighbour(model_input, model_input.grad.data)
         output_x_neighbour, output_c_neighbour = model(model_input_neighbour)
         model_input.requires_grad = False

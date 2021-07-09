@@ -74,9 +74,6 @@ def main():
         'valid_global_steps': 0,
     }
 
-    gpus = list(config.GPUS)
-    model = torch.nn.DataParallel(model, device_ids=gpus).cuda()
-
     # define loss function (criterion) and optimizer
     # criterion = torch.nn.CrossEntropyLoss().cuda()
     criterion1 = torch.nn.BCELoss().cuda()
@@ -102,12 +99,14 @@ def main():
             assert os.path.isfile(base_model_path)
             model_state = torch.load(base_model_path)
             last_epoch = 0
-            print(model_state.keys())
             if 'state_dict' in model_state:
                 model.load_state_dict(model_state['state_dict'])
             else:
                 model.load_state_dict(model_state)
             logger.info("=> loaded base model: {}".format(base_model_path))
+
+    gpus = list(config.GPUS)
+    model = torch.nn.DataParallel(model, device_ids=gpus).cuda()
 
     if isinstance(config.TRAIN.LR_STEP, list):
         lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(

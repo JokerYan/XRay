@@ -78,24 +78,6 @@ def main():
     criterion2 = torch.nn.BCELoss().cuda()
 
     # Data loading code
-    valdir = os.path.join(config.DATASET.ROOT,
-                          config.DATASET.TEST_SET)
-    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                     std=[0.229, 0.224, 0.225])
-    #
-    # valid_loader = torch.utils.data.DataLoader(
-    #     datasets.ImageFolder(valdir, transforms.Compose([
-    #         transforms.Resize(int(config.MODEL.IMAGE_SIZE[0] / 0.875)),
-    #         transforms.CenterCrop(config.MODEL.IMAGE_SIZE[0]),
-    #         transforms.ToTensor(),
-    #         normalize,
-    #     ])),
-    #     batch_size=config.TEST.BATCH_SIZE_PER_GPU*len(gpus),
-    #     shuffle=False,
-    #     num_workers=config.WORKERS,
-    #     pin_memory=True
-    # )
-
     valid_dataset = XRayDataset(
         './data/val_image_selected.csv',
          transforms.Compose([
@@ -103,6 +85,7 @@ def main():
              custom_transforms.ImageToOne(),
              custom_transforms.MaskToXray(),
              custom_transforms.ToTensor(cuda=False),
+             custom_transforms.Noise(),
              custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0])),
              # custom_transforms.Grayscale(enabled=config.GRAYSCALE),
              custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],

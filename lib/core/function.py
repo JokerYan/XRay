@@ -157,15 +157,6 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
                 save_image_stack(target_x, 'target_x_{}'.format(i), max_count=3)
                 save_image_stack(output_x, 'output_x_{}'.format(i), max_count=3)
 
-            # print('target:')
-            # print(target_c.detach().cpu())
-            # print('output:')
-            # print(output_c.detach().cpu())
-            # print('loss 1:')
-            # print(loss1 * 100)
-            # print('loss 2:')
-            # print(loss2)
-
             # measure accuracy and record loss
             losses.update(loss.item(), model_input.size(0))
 

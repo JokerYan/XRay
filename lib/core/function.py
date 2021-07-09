@@ -401,8 +401,9 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
             }, False, output_dir, filename='mini_checkpoint.pth.tar')
 
 
-def adv_finetune(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
-              output_dir, tb_log_dir, writer_dict):
+def adv_finetune(config, train_loader, model, criterion1, criterion2,
+                 criterion1_adv, criterion2_adv, optimizer, epoch,
+                 output_dir, tb_log_dir, writer_dict):
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
@@ -435,9 +436,14 @@ def adv_finetune(config, train_loader, model, criterion1, criterion2, optimizer,
         # target_x = target_x.cuda(non_blocking=True)
         target_c = target_c.cuda(non_blocking=True)
 
-        loss1 = criterion1(output_x, output_x_neighbour)
-        loss2 = criterion2(output_c, output_c_neighbour)
-        loss = loss1 * 100 + loss2
+        loss1 = criterion1(output_x, target_x)
+        loss2 = criterion2(output_c, target_c)
+        loss_normal = loss1 * 100 + loss2
+        loss1_adv = criterion1_adv(output_x, output_x_neighbour)
+        loss2_adv = criterion2_adv(output_c, output_c_neighbour)
+        loss_adv = loss1_adv * 100 + loss2_adv
+
+        loss = loss_normal + 0.5 * loss_adv
 
         # compute gradient and do update step
         optimizer.zero_grad()

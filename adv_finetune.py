@@ -76,8 +76,10 @@ def main():
 
     # define loss function (criterion) and optimizer
     # criterion = torch.nn.CrossEntropyLoss().cuda()
-    criterion1 = torch.nn.MSELoss().cuda()
-    criterion2 = torch.nn.MSELoss().cuda()
+    criterion1 = torch.nn.BCELoss().cuda()
+    criterion2 = torch.nn.BCELoss().cuda()
+    criterion1_adv = torch.nn.MSELoss().cuda()
+    criterion2_adv = torch.nn.MSELoss().cuda()
 
     optimizer = get_optimizer(config, model)
 
@@ -199,8 +201,8 @@ def main():
 
     for epoch in range(last_epoch, config.TRAIN.END_EPOCH):
         # train for one epoch
-        adv_finetune(config, train_loader, model, criterion1, criterion2, optimizer, epoch,
-              final_output_dir, tb_log_dir, writer_dict)
+        adv_finetune(config, train_loader, model, criterion1, criterion2, criterion1_adv, criterion2_adv
+                     , optimizer, epoch, final_output_dir, tb_log_dir, writer_dict)
         lr_scheduler.step()
         # evaluate on validation set
         perf_indicator = validate(config, valid_loader, model, criterion1, criterion2,

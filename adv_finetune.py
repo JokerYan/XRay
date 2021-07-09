@@ -102,6 +102,7 @@ def main():
             assert os.path.isfile(base_model_path)
             model_state = torch.load(base_model_path)
             last_epoch = 0
+            print(model_state.keys())
             if 'state_dict' in model_state:
                 model.load_state_dict(model_state['state_dict'])
             else:

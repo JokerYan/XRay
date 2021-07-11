@@ -14,7 +14,7 @@ config_path = 'experiments/cw_inf_att.json'
 # to change target model, both the 'model_path' in the above config
 # and 'args.cfg' path in parse_args()
 
-cfg_path = 'experiments/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux_adv.yaml'
+cfg_path = 'experiments/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
 pretrained_model = 'hrnetv2_w18_imagenet_pretrained.pth'
 
 def load_target_model(model_path):
@@ -29,6 +29,7 @@ def load_target_model(model_path):
 def main():
     config_json = json.load(open(config_path))
     model, target_config = load_target_model(config_json['model_path'])
+    val_model, target_config = load_target_model(config_json['val_model_path'])
     attack_model = CWInfAttack(
         model,
         config_json['c'],
@@ -74,6 +75,7 @@ def main():
         target_x = data['mask_frame']
         target_c = data['is_fake']
         best_adv_images, best_acc, best_delta = attack_model(input, target_c)
+        print(val_model(best_adv_images))
         best_acc_list.append(best_acc)
         best_delta_list.append(best_delta)
     print('===== Attack finished =====')

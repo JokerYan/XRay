@@ -301,7 +301,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
     # freeze / unfreeze hrnet
     if epoch == 0:
         model_student.module.freeze_hrnet()
-    elif epoch == 3:
+    elif epoch == 1:
         model_student.module.unfreeze_hrnet()
 
     # switch to train mode
@@ -328,7 +328,7 @@ def smooth_distill(config, train_loader, model_teacher, model_student, criterion
         # print(model_input_teacher.grad.data)
         model_input_neighbour = get_input_neighbour(model_input, model_input.grad.data)
         neighbour_x, neighbour_c = model_teacher(model_input_neighbour)
-        teacher_ratio = 0.5
+        teacher_ratio = 1
         mix_x = teacher_ratio * teacher_x + (1 - teacher_ratio) * neighbour_x
 
         # normal input

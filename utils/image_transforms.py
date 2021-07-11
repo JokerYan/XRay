@@ -251,13 +251,20 @@ class MaskedNoise(object):
     def __init__(self, variance=0.05):
         self.variance = variance
 
+    def blur(self, src, kernal_size=3):
+        kernal = np.ones((kernal_size, kernal_size), np.float32) / (kernal_size ** 2)
+        dst = cv2.filter2D(src, -1, kernal)
+        return dst
+
     def __call__(self, sample):
         video_frame = sample['video_frame']
         mask_frame = sample['mask_frame']
         # noise = torch.randn_like(video_frame) * self.variance
         noise = np.random.randn(*video_frame.shape) * self.variance
         # masked_noise = mask_frame.expand_as(video_frame) * noise
-        masked_noise = np.repeat(np.expand_dims(mask_frame, axis=2), 3, axis=2) * noise
+        mask = np.repeat(np.expand_dims(mask_frame, axis=2), 3, axis=2)
+        mask = self.blur(mask)
+        masked_noise = mask * noise
         noise_image = video_frame + masked_noise
         return {
             'video_frame': noise_image,

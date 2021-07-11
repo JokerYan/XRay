@@ -263,7 +263,7 @@ class MaskedNoise(object):
         noise = np.random.randn(*video_frame.shape) * self.variance
         # masked_noise = mask_frame.expand_as(video_frame) * noise
         mask = np.repeat(np.expand_dims(mask_frame, axis=2), 3, axis=2)
-        mask = self.blur(mask)
+        mask = self.blur(mask, 10)
         masked_noise = mask * noise
         noise_image = video_frame + masked_noise
         return {

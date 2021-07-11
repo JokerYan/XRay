@@ -248,7 +248,7 @@ class Noise(object):
 
 
 class MaskedNoise(object):
-    def __init__(self, variance=0.1):
+    def __init__(self, variance=0.05):
         self.variance = variance
 
     def __call__(self, sample):

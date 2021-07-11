@@ -238,11 +238,29 @@ class Noise(object):
         self.variance = variance
 
     def __call__(self, sample):
-        frame_image = sample['video_frame']
-        noise_image = frame_image + torch.randn_like(frame_image) * self.variance
+        video_frame = sample['video_frame']
+        noise_image = video_frame + torch.randn_like(video_frame) * self.variance
         return {
             'video_frame': noise_image,
             'mask_frame': sample['mask_frame'],
             'is_fake': sample['is_fake']
         }
+
+
+class MaskedNoise(object):
+    def __init__(self, variance=0.05):
+        self.variance = variance
+
+    def __ceil__(self, sample):
+        video_frame = sample['video_frame']
+        mask_frame = sample['mask_frame']
+        noise = torch.randn_like(video_frame) * self.variance
+        masked_noise = mask_frame.expand_as(video_frame) * noise
+        noise_image = video_frame + masked_noise
+        return {
+            'video_frame': noise_image,
+            'mask_frame': mask_frame,
+            'is_fake': sample['is_fake']
+        }
+
 

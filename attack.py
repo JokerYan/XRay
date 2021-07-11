@@ -75,9 +75,11 @@ def main():
         target_x = data['mask_frame']
         target_c = data['is_fake']
         best_adv_images, best_acc, best_delta = attack_model(input, target_c)
-        val_output_x, val_output_c = val_model(best_adv_images)
+        val_output_x, val_output_c = val_model(input)
+        val_output_x_adv, val_output_c_adv = val_model(best_adv_images)
         print(">>>>>")
         print(val_output_c)
+        print(val_output_c_adv)
         best_acc_list.append(best_acc)
         best_delta_list.append(best_delta)
     print('===== Attack finished =====')

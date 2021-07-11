@@ -83,9 +83,9 @@ def main():
          transforms.Compose([
              # TODO: Change Random Crop to Centre Crop
              custom_transforms.ImageToOne(),
+             custom_transforms.MaskedNoise(),
              custom_transforms.MaskToXray(),
              custom_transforms.ToTensor(cuda=False),
-             custom_transforms.MaskedNoise(),
              custom_transforms.Rescale(int(config.MODEL.IMAGE_SIZE[0])),
              # custom_transforms.Grayscale(enabled=config.GRAYSCALE),
              custom_transforms.Normalize(mean=[0.485, 0.456, 0.406],

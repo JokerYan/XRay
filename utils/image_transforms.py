@@ -254,8 +254,10 @@ class MaskedNoise(object):
     def __call__(self, sample):
         video_frame = sample['video_frame']
         mask_frame = sample['mask_frame']
-        noise = torch.randn_like(video_frame) * self.variance
-        masked_noise = mask_frame.expand_as(video_frame) * noise
+        # noise = torch.randn_like(video_frame) * self.variance
+        noise = np.randn(*video_frame.shape) * self.variance
+        # masked_noise = mask_frame.expand_as(video_frame) * noise
+        masked_noise = np.repeat(mask_frame, 3, axis=0) * noise
         noise_image = video_frame + masked_noise
         return {
             'video_frame': noise_image,

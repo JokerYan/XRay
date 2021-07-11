@@ -89,7 +89,8 @@ class CWInfAttack(nn.Module):
         save_image_stack(original_output, 'original output')
         save_image_stack(best_output_x, 'adversarial output')
         delta_image = torch.abs(best_adv_images - images)
-        adjusted_delta = delta_image / max(delta_image)
+        adjusted_delta = delta_image / torch.max(delta_image)
+        print(adjusted_delta)
         save_image_stack(adjusted_delta, 'adjusted delta')
 
         return best_adv_images, best_acc, best_delta

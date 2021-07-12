@@ -25,8 +25,7 @@ class XRayNetEnsemble(nn.Module):
         output_c_final = torch.max(torch.stack([output_c_mean, output_c_variance]), dim=0).values
 
         print(output_c_list.reshape(-1))
-        print(output_c_mean.shape)
-        print(output_c_variance.shape)
-        print(output_c_final)
+        print(output_c_mean)
+        print(output_c_variance)
 
         return output_x_mean, output_c_final

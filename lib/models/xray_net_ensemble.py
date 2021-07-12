@@ -22,7 +22,7 @@ class XRayNetEnsemble(nn.Module):
         # output_c_entropy = torch.distributions.Categorical(probs=output_c_list).entropy()
         output_c_variance = torch.var(output_c_list, dim=0)
 
-        output_c_final = torch.max(torch.stack([output_c_mean, output_c_variance]), dim=0)
+        output_c_final = torch.max(torch.stack([output_c_mean, output_c_variance]), dim=0).values
 
         print(output_c_list.reshape(-1))
         print(output_c_mean.shape)

@@ -35,7 +35,7 @@ def main():
         model, target_config = load_target_model(model_info['model_path'], model_info['model_cfg_path'])
         model_list.append(model)
     model_ensemble = XRayNetEnsemble(model_list)
-    val_model, target_config = load_target_model(config_json['val_model_path'])
+    val_model, target_config = load_target_model(config_json['val_model_path'], config_json['val_model_cfg_path'])
     attack_model = CWInfAttack(
         model_ensemble,
         config_json['c'],

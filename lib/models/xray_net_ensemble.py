@@ -4,6 +4,7 @@ import torch.nn as nn
 
 class XRayNetEnsemble(nn.Module):
     def __init__(self, model_list):
+        super().__init__()
         self.model_list = nn.ModuleList(model_list)
 
     def forward(self, x):

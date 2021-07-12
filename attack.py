@@ -80,8 +80,9 @@ def main():
         print(">>>>>")
         print(val_output_c)
         print(val_output_c_adv)
-        best_acc_list.append(best_acc)
-        best_delta_list.append(best_delta)
+        if best_acc > 0:
+            best_acc_list.append(best_acc)
+            best_delta_list.append(best_delta)
     print('===== Attack finished =====')
     print('Avg Acc: {}\tAvg Delta: {}'.format(
         sum(best_acc_list) / len(best_acc_list),

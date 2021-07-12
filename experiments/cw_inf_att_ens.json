@@ -9,7 +9,7 @@
   "val_model_path": "./output/ILSVRC/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux_exp05/model_best.pth.tar",
   "val_model_cfg_path": "experiments/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml",
   "c": 2,
-  "lr": 1,
+  "lr": 0.1,
   "momentum": 0.9,
   "steps": 20,
   "batch_size": 1

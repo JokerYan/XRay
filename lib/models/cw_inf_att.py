@@ -82,6 +82,7 @@ class CWInfAttack(nn.Module):
             if acc == 1:
                 break
         print('Batch finished: Acc: {}\tDelta: {}'.format(best_acc, best_delta))
+        print('>>>>>')
         pickle.dump(best_adv_images, open('adv_images_batch.pkl', 'wb'))
         clear_debug_image()
         save_image_stack(images, 'original input')

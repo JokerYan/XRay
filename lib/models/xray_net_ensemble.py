@@ -26,7 +26,8 @@ class XRayNetEnsemble(nn.Module):
         variance_threshold = 0.03
         output_c_variance = torch.var(output_c_list, dim=0) + (0.5 - variance_threshold)
 
-        output_c_final = torch.max(torch.stack([output_c_mean, output_c_variance]), dim=0).values
+        # output_c_final = torch.max(torch.stack([output_c_mean, output_c_variance]), dim=0).values
+        output_c_final = torch.max(torch.stack([output_c_mean, output_c_entropy]), dim=0).values
 
         print(output_c_list.reshape(-1))
         print(output_c_mean)

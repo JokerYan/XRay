@@ -49,10 +49,10 @@ def main():
     logger.info(pprint.pformat(args))
     logger.info(pprint.pformat(config))
 
-    dump_input = torch.rand(
-        (1, 3, config.MODEL.IMAGE_SIZE[1], config.MODEL.IMAGE_SIZE[0])
-    )
-    logger.info(get_model_summary(model, dump_input))
+    # dump_input = torch.rand(
+    #     (1, 3, config.MODEL.IMAGE_SIZE[1], config.MODEL.IMAGE_SIZE[0])
+    # )
+    # logger.info(get_model_summary(model, dump_input))
 
     # if config.TEST.MODEL_FILE:
     #     logger.info('=> loading model from {}'.format(config.TEST.MODEL_FILE))

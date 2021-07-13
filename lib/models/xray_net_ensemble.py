@@ -22,6 +22,8 @@ class XRayNetEnsemble(nn.Module):
 
         entropy_threshold = 0.6853
         output_c_entropy = entropy_threshold - torch.distributions.Categorical(probs=output_c_list).entropy() + 0.5
+        print(output_c_list.shape)
+        print(output_c_entropy.shape)
 
         variance_threshold = 0.03
         output_c_variance = torch.var(output_c_list, dim=0) + (0.5 - variance_threshold)

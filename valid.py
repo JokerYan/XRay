@@ -39,9 +39,13 @@ from lib.utils.utils import get_optimizer, save_checkpoint, create_logger
 cfg_path = 'experiments/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
 pretrained_model = 'hrnetv2_w18_imagenet_pretrained.pth'
 
+ensemble = True
+
 def main():
-    # model, args, config = construct_model(cfg_path, pretrained_model)
-    model, args, config = construct_ensemble_model('experiments/cw_inf_att_ens.json')
+    if not ensemble:
+        model, args, config = construct_model(cfg_path, pretrained_model)
+    else:
+        model, args, config = construct_ensemble_model('experiments/cw_inf_att_ens.json')
 
     logger, final_output_dir, tb_log_dir = create_logger(
         config, args.cfg, 'valid')
@@ -49,10 +53,11 @@ def main():
     logger.info(pprint.pformat(args))
     logger.info(pprint.pformat(config))
 
-    # dump_input = torch.rand(
-    #     (1, 3, config.MODEL.IMAGE_SIZE[1], config.MODEL.IMAGE_SIZE[0])
-    # )
-    # logger.info(get_model_summary(model, dump_input))
+    if not ensemble:
+        # dump_input = torch.rand(
+        #     (1, 3, config.MODEL.IMAGE_SIZE[1], config.MODEL.IMAGE_SIZE[0])
+        # )
+        # logger.info(get_model_summary(model, dump_input))
 
     # if config.TEST.MODEL_FILE:
     #     logger.info('=> loading model from {}'.format(config.TEST.MODEL_FILE))
@@ -61,14 +66,15 @@ def main():
     # else:
     #     # model_state_file = os.path.join(final_output_dir,
     #     #                                 'final_state.pth.tar')
-    model_state_file = os.path.join(final_output_dir,
-                                    'model_best.pth.tar')
-    logger.info('=> loading model from {}'.format(model_state_file))
-    model_state = torch.load(model_state_file)
-    if 'state_dict' in model_state:
-        model.load_state_dict(model_state['state_dict'])
-    else:
-        model.load_state_dict(model_state)
+    if not ensemble:
+        model_state_file = os.path.join(final_output_dir,
+                                        'model_best.pth.tar')
+        logger.info('=> loading model from {}'.format(model_state_file))
+        model_state = torch.load(model_state_file)
+        if 'state_dict' in model_state:
+            model.load_state_dict(model_state['state_dict'])
+        else:
+            model.load_state_dict(model_state)
 
     gpus = list(config.GPUS)
     model = torch.nn.DataParallel(model, device_ids=gpus).cuda()

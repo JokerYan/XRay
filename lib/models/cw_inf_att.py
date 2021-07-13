@@ -26,6 +26,7 @@ class CWInfAttack(nn.Module):
             mean=[0.485, 0.456, 0.406],
             std=[0.229, 0.224, 0.225]
         )
+        self.counter = 0
 
     def forward(self, images, labels):
         images = images.clone().detach().to(self.device)
@@ -83,16 +84,19 @@ class CWInfAttack(nn.Module):
                 break
         print('Batch finished: Acc: {}\tDelta: {}'.format(best_acc, best_delta))
         print('>>>>>')
-        pickle.dump(best_adv_images, open('adv_images_batch.pkl', 'wb'))
-        clear_debug_image()
-        save_image_stack(images, 'original input')
-        save_image_stack(best_adv_images, 'adversarial input')
-        save_image_stack(original_output, 'original output')
-        save_image_stack(best_output_x, 'adversarial output')
-        # delta_image = torch.abs(best_adv_images - images)
-        # print(torch.max(delta_image))
-        # adjusted_delta = delta_image / torch.max(delta_image)
-        # save_image_stack(adjusted_delta, 'adjusted delta')
+        # pickle.dump(best_adv_images, open('adv_images_batch.pkl', 'wb'))
+        if self.counter == 0:
+            clear_debug_image()
+        if self.counter < 5:
+            self.counter += 1
+            save_image_stack(images, 'original input {}'.format(self.counter))
+            save_image_stack(best_adv_images, 'adversarial input {}'.format(self.counter))
+            save_image_stack(original_output, 'original output {}'.format(self.counter))
+            save_image_stack(best_output_x, 'adversarial output {}'.format(self.counter))
+            # delta_image = torch.abs(best_adv_images - images)
+            # print(torch.max(delta_image))
+            # adjusted_delta = delta_image / torch.max(delta_image)
+            # save_image_stack(adjusted_delta, 'adjusted delta')
 
         return best_adv_images, best_acc, best_delta
 

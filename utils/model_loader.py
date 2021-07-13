@@ -46,11 +46,9 @@ def construct_ensemble_model(cfg_json_path):
         if model_config is None:
             model_args = args
             model_config = target_config
-            gpus = list(target_config.GPUS)
-            model = torch.nn.DataParallel(model, device_ids=gpus).cuda()
         state_dict = torch.load(model_info['model_path'])
         model.load_state_dict(state_dict)
-        model = model.cuda()
+        # model = model.cuda()
         model_list.append(model)
     model_ensemble = XRayNetEnsemble(model_list)
     return model_ensemble, model_args, model_config

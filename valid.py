@@ -27,7 +27,7 @@ import torchvision.transforms as transforms
 import lib.models.cls_hrnet as cls_hrnet
 from lib.models.xray_net import XRayNet
 import utils.image_transforms as custom_transforms
-from utils.model_loader import Args, construct_model
+from utils.model_loader import Args, construct_model, construct_ensemble_model
 from utils.xray_dataset import XRayDataset
 
 from lib.config import config
@@ -40,7 +40,8 @@ cfg_path = 'experiments/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.
 pretrained_model = 'hrnetv2_w18_imagenet_pretrained.pth'
 
 def main():
-    model, args, config = construct_model(cfg_path, pretrained_model)
+    # model, args, config = construct_model(cfg_path, pretrained_model)
+    model, args, config = construct_ensemble_model('experiments/cw_inf_att_ens.json')
 
     logger, final_output_dir, tb_log_dir = create_logger(
         config, args.cfg, 'valid')

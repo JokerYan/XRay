@@ -39,13 +39,16 @@ def construct_model(cfg_path, pretrained_model):
 def construct_ensemble_model(cfg_json_path):
     config_json = json.load(open(cfg_json_path))
     model_list = []
+    model_args = None
+    model_config = None
     for model_info in config_json['models']:
         model, args, target_config = construct_model(model_info['model_cfg_path'], pretrained_model="")
+        if model_config is None:
+            model_args = args
+            model_config = target_config
         state_dict = torch.load(model_info['model_path'])
         model.load_state_dict(state_dict)
         model = model.cuda()
         model_list.append(model)
     model_ensemble = XRayNetEnsemble(model_list)
-    gpus = [i for i in range(torch.cuda.device_count())]
-    model_ensemble = torch.nn.DataParallel(model_ensemble, device_ids=gpus).cuda()
-    return model_ensemble
+    return model_ensemble, model_args, model_config

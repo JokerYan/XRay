@@ -39,8 +39,8 @@ def select_data():
 
 
 def main():
-    collect_video_to_csv()
-    save_frame_from_video()
+    # collect_video_to_csv()
+    # save_frame_from_video()
     select_data()
 
 

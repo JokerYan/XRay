@@ -34,5 +34,4 @@ class XRayDataset(Dataset):
         item = {"video_frame": video_frame, "mask_frame": mask_frame, "is_fake": is_fake}
         if self.transform:
             item = self.transform(item)
-        print(item['video_frame'].shape)
         return item

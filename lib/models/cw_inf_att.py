@@ -87,7 +87,7 @@ class CWInfAttack(nn.Module):
         # pickle.dump(best_adv_images, open('adv_images_batch.pkl', 'wb'))
         if self.counter == 0:
             clear_debug_image()
-        if self.counter < 5:
+        if self.counter < 5 and best_acc == 1:
             self.counter += 1
             save_image_stack(images, 'original input {}'.format(self.counter))
             save_image_stack(best_adv_images, 'adversarial input {}'.format(self.counter))

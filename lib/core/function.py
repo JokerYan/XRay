@@ -174,12 +174,10 @@ def validate(config, val_loader, model, criterion1, criterion2, output_dir, tb_l
             batch_time.update(time.time() - end)
             end = time.time()
 
-        # output_list = np.array(output_list).reshape(-1)
-        # target_list = np.array(target_list).reshape(-1)
-        # print(output_list.shape)
-        # print(target_list.shape)
-        # print(output_list[np.isnan(output_list)])
-        # print(target_list[np.isnan(target_list)])
+            clear_debug_image()
+            save_image_stack(model_input, 'input', 10, normalized=True)
+            save_image_stack(output_x, 'output', 10)
+
         auc = cal_roc_auc(output_list, target_list)
         msg = 'Test: Time {batch_time.avg:.3f}\t' \
               'Loss {loss.avg:.4f}\t' \

@@ -33,6 +33,6 @@ real_video_dir = os.path.join(real_root_dir, "**/")
 
 # select/balance data
 # dataset_name = 'Deepfakes'
-dataset_name = 'Face2Face'
+dataset_name = 'NeuralTextures'
 train_image_selected_csv_path = os.path.join(data_csv_folder, "train_image_selected.csv")
 val_image_selected_csv_path = os.path.join(data_csv_folder, "val_image_selected.csv")

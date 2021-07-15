@@ -45,28 +45,33 @@ class Rescale(object):
             to output_size keeping aspect ratio the same.
     """
 
-    def __init__(self, output_size):
+    def __init__(self, output_size, keep_ratio=True):
         assert isinstance(output_size, (int, tuple))
         self.output_size = output_size
+        self.keep_ratio = keep_ratio
 
     def __call__(self, sample):
         video_frame, mask_frame = sample['video_frame'], sample['mask_frame']
 
-        h, w = video_frame.shape[1:]
-        if isinstance(self.output_size, int):
-            if h > w:
-                new_h, new_w = self.output_size * h / w, self.output_size
+        if self.keep_ratio:
+            h, w = video_frame.shape[1:]
+            if isinstance(self.output_size, int):
+                if h > w:
+                    new_h, new_w = self.output_size * h / w, self.output_size
+                else:
+                    new_h, new_w = self.output_size, self.output_size * w / h
             else:
-                new_h, new_w = self.output_size, self.output_size * w / h
+                new_h, new_w = self.output_size
+
+            new_h, new_w = int(new_h), int(new_w)
+
+            # video_frame = skimage_transforms.resize(video_frame, (new_h, new_w), anti_aliasing=True)
+            # mask_frame = skimage_transforms.resize(mask_frame, (new_h, new_w), anti_aliasing=True)
+            video_frame = torchvision.transforms.Resize((new_h, new_w))(video_frame)
+            mask_frame = torchvision.transforms.Resize((new_h, new_w))(mask_frame)
         else:
-            new_h, new_w = self.output_size
-
-        new_h, new_w = int(new_h), int(new_w)
-
-        # video_frame = skimage_transforms.resize(video_frame, (new_h, new_w), anti_aliasing=True)
-        # mask_frame = skimage_transforms.resize(mask_frame, (new_h, new_w), anti_aliasing=True)
-        video_frame = torchvision.transforms.Resize((new_h, new_w))(video_frame)
-        mask_frame = torchvision.transforms.Resize((new_h, new_w))(mask_frame)
+            video_frame = torchvision.transforms.Resize((self.output_size, self.output_size))(video_frame)
+            mask_frame = torchvision.transforms.Resize((self.output_size, self.output_size))(mask_frame)
 
         return {'video_frame': video_frame, 'mask_frame': mask_frame, 'is_fake': sample['is_fake']}
 

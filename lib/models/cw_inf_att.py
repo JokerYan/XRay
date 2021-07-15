@@ -87,12 +87,12 @@ class CWInfAttack(nn.Module):
         # pickle.dump(best_adv_images, open('adv_images_batch.pkl', 'wb'))
         if self.counter == 0:
             clear_debug_image()
-        if self.counter < 5 and best_acc == 1:
+        if self.counter < 10 and best_acc == 1:
             self.counter += 1
-            save_image_stack(images, 'original input {}'.format(self.counter))
-            save_image_stack(best_adv_images, 'adversarial input {}'.format(self.counter))
-            save_image_stack(original_output, 'original output {}'.format(self.counter))
-            save_image_stack(best_output_x, 'adversarial output {}'.format(self.counter))
+            save_image_stack(images, 'original input {} {}'.format(self.counter, best_delta))
+            save_image_stack(best_adv_images, 'adversarial input {} {}'.format(self.counter, best_delta))
+            save_image_stack(original_output, 'original output {} {}'.format(self.counter, best_delta))
+            save_image_stack(best_output_x, 'adversarial output {} {}'.format(self.counter, best_delta))
             # delta_image = torch.abs(best_adv_images - images)
             # print(torch.max(delta_image))
             # adjusted_delta = delta_image / torch.max(delta_image)

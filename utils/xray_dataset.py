@@ -26,7 +26,6 @@ class XRayDataset(Dataset):
         video_frame_path, mask_frame_path, is_fake = self.video_mask_list[idx]
         # print(video_frame_path, mask_frame_path)
         video_frame = np.float32(cv2.imread(video_frame_path))
-        print(video_frame.shape)
         if mask_frame_path is not None:
             mask_frame = np.float32(cv2.imread(mask_frame_path))
         else:
@@ -35,4 +34,5 @@ class XRayDataset(Dataset):
         item = {"video_frame": video_frame, "mask_frame": mask_frame, "is_fake": is_fake}
         if self.transform:
             item = self.transform(item)
+        print(item['video_frame'].shape)
         return item

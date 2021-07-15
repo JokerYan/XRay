@@ -36,8 +36,8 @@ from lib.core.function import validate, train
 from lib.utils.modelsummary import get_model_summary
 from lib.utils.utils import get_optimizer, save_checkpoint, create_logger
 
-cfg_path = 'experiments/cls_hrnet_w18_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
-pretrained_model = 'hrnetv2_w18_imagenet_pretrained.pth'
+cfg_path = 'experiments/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100_adapted_linux.yaml'
+pretrained_model = 'hrnetv2_w64_imagenet_pretrained.pth'
 
 ensemble = False
 

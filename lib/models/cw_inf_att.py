@@ -4,6 +4,7 @@ import torch.nn as nn
 import torchvision.transforms as torch_transforms
 
 from lib.core.evaluate import cal_accuracy
+from lib.models.smooth_model import SmoothModel
 from utils.debug_tools import save_image_stack, clear_debug_image
 
 
@@ -17,6 +18,7 @@ class CWInfAttack(nn.Module):
         super(CWInfAttack, self).__init__()
 
         self.model = model
+        self.smooth_model = SmoothModel(model)
         self.c = c
         self.lr = lr
         self.steps = steps
@@ -44,11 +46,13 @@ class CWInfAttack(nn.Module):
         best_acc = 0
         best_delta = 1
 
-        optimizer = torch.optim.SGD([w], lr=self.lr, momentum=self.momentum)
+        # optimizer = torch.optim.SGD([w], lr=self.lr, momentum=self.momentum)
+        optimizer = torch.optim.Adam([w], lr=self.lr)
 
         for step in range(self.steps):
             adv_images = self.w_to_adv_images(w)
             output_x, output_c = self.model(self.Normalize(adv_images))
+            self.smooth_model(self.Normalize(adv_images))
             if original_output is None:
                 original_output = output_x
 

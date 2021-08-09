@@ -5,9 +5,9 @@ import glob
 
 def generate_csv_from_dir(data_dir, file_path):
     output_list = []
-    original_dir = os.path.join(data_dir, "images", "original")
-    blended_dir = os.path.join(data_dir, "images", "blended")
-    mask_dir = os.path.join(data_dir, "mask")
+    original_dir = os.path.join(data_dir, "images", "original", "*")
+    blended_dir = os.path.join(data_dir, "images", "blended", "*")
+    mask_dir = os.path.join(data_dir, "mask", "*")
 
     # add original images to output_list
     for image_path in glob.glob(original_dir):
@@ -15,7 +15,6 @@ def generate_csv_from_dir(data_dir, file_path):
 
     # match blended images and mask images
     for image_path in glob.glob(blended_dir):
-        print(image_path)
         image_name = re.match(os.path.join(original_dir, r'(\d*).png'), image_path).group(1)
         frame_image_path = os.path.join(original_dir, image_name + '.png')
         mask_image_path = os.path.join(mask_dir, 'mask_' + image_name + '.png')
